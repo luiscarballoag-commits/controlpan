@@ -40,17 +40,22 @@ class _RecipesPageState extends State<RecipesPage> {
                     vertical: 6,
                   ),
                   child: ListTile(
-                    leading: const Icon(Icons.menu_book),
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.menu_book),
+                    ),
                     title: Text(recipe.name),
-                    subtitle: Text(recipe.category),
+                    subtitle: Text(
+                      "${recipe.ingredients.length} ingredientes",
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {},
                   ),
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text("Nueva receta"),
         onPressed: () async {
           await Navigator.push(
             context,
