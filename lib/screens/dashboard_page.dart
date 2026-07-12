@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'new_production_page.dart';
+import 'recipes_page.dart';
+import 'ingredients_page.dart';
+import 'inventory_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -29,9 +32,7 @@ class DashboardPage extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-
             const SizedBox(height: 16),
-
             const Text(
               "La forma inteligente de gestionar tu panadería",
               textAlign: TextAlign.center,
@@ -40,9 +41,7 @@ class DashboardPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 25),
-
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
@@ -62,14 +61,40 @@ class DashboardPage extends StatelessWidget {
                     },
                   ),
                   DashboardCard(
-                    icon: Icons.inventory_2_outlined,
-                    title: "Inventario",
-                    onTap: () {},
+                    icon: Icons.menu_book_outlined,
+                    title: "Mis Recetas",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RecipesPage(),
+                        ),
+                      );
+                    },
                   ),
                   DashboardCard(
-                    icon: Icons.calculate_outlined,
-                    title: "Calculadora",
-                    onTap: () {},
+                    icon: Icons.inventory,
+                    title: "Ingredientes",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const IngredientsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  DashboardCard(
+                    icon: Icons.inventory_2_outlined,
+                    title: "Inventario",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const InventoryPage(),
+                        ),
+                      );
+                    },
                   ),
                   DashboardCard(
                     icon: Icons.attach_money,
@@ -131,7 +156,7 @@ class DashboardCard extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
             ),
