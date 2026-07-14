@@ -5,12 +5,11 @@ import '../models/ingredient_catalog.dart';
 class IngredientService {
   static const String boxName = 'ingredients';
 
-  Box get _box => Hive.box(boxName);
+  Box<IngredientCatalog> get _box =>
+      Hive.box<IngredientCatalog>(boxName);
 
   List<IngredientCatalog> getAllIngredients() {
-    return _box.values
-        .cast<IngredientCatalog>()
-        .toList();
+    return _box.values.toList();
   }
 
   void addIngredient(IngredientCatalog ingredient) {
@@ -26,5 +25,25 @@ class IngredientService {
 
   void deleteIngredient(int index) {
     _box.deleteAt(index);
+  }
+
+  IngredientCatalog? getIngredient(int index) {
+    if (index < 0 || index >= _box.length) {
+      return null;
+    }
+
+    return _box.getAt(index);
+  }
+
+  int count() {
+    return _box.length;
+  }
+
+  bool get isEmpty => _box.isEmpty;
+
+  bool get isNotEmpty => _box.isNotEmpty;
+
+  void clear() {
+    _box.clear();
   }
 }

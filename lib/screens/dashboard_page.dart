@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'new_production_page.dart';
 import 'recipes_page.dart';
+import 'ingredients_page.dart';
 import 'inventory_page.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -64,8 +66,7 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              const NewProductionPage(),
+                          builder: (_) => const NewProductionPage(),
                         ),
                       );
                     },
@@ -78,8 +79,20 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              const RecipesPage(),
+                          builder: (_) => const RecipesPage(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  DashboardCard(
+                    icon: Icons.science_outlined,
+                    title: "Ingredientes",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const IngredientsPage(),
                         ),
                       );
                     },
@@ -92,11 +105,16 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              const InventoryPage(),
+                          builder: (_) => const InventoryPage(),
                         ),
                       );
                     },
+                  ),
+
+                  DashboardCard(
+                    icon: Icons.calculate_outlined,
+                    title: "Calculadora",
+                    onTap: () {},
                   ),
 
                   DashboardCard(
@@ -172,4 +190,4 @@ class DashboardCard extends StatelessWidget {
       ),
     );
   }
-}
+}}

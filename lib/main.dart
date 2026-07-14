@@ -9,14 +9,33 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
-  Hive.registerAdapter(IngredientCatalogAdapter());
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(IngredientCatalogAdapter());
+  }
 
-  await Hive.openBox<IngredientCatalog>('ingredients');
-  await Hive.openBox('recipes');
-  await Hive.openBox('inventory');
-  await Hive.openBox('productions');
-  await Hive.openBox('costs');
-  await Hive.openBox('settings');
+  if (!Hive.isBoxOpen('ingredients')) {
+    await Hive.openBox<IngredientCatalog>('ingredients');
+  }
+
+  if (!Hive.isBoxOpen('recipes')) {
+    await Hive.openBox('recipes');
+  }
+
+  if (!Hive.isBoxOpen('inventory')) {
+    await Hive.openBox('inventory');
+  }
+
+  if (!Hive.isBoxOpen('productions')) {
+    await Hive.openBox('productions');
+  }
+
+  if (!Hive.isBoxOpen('costs')) {
+    await Hive.openBox('costs');
+  }
+
+  if (!Hive.isBoxOpen('settings')) {
+    await Hive.openBox('settings');
+  }
 
   runApp(const ControlPanApp());
 }
