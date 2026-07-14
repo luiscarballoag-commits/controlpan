@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'new_production_page.dart';
 import 'recipes_page.dart';
-import 'ingredients_page.dart';
 import 'inventory_page.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -14,7 +13,9 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ControlPan',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF8D6E63),
@@ -24,30 +25,38 @@ class DashboardPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            ClipOval(
-              child: Image.asset(
-                'assets/images/controlpan_logo.jpg',
-                width: 110,
-                height: 110,
-                fit: BoxFit.cover,
+
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Image.asset(
+                  'assets/images/dashboard_banner.png',
+                  width: double.infinity,
+                  height: 170,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              "La forma inteligente de gestionar tu panadería",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+
             const SizedBox(height: 25),
+
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
                 children: [
+
                   DashboardCard(
                     icon: Icons.add_circle_outline,
                     title: "Nueva Producción",
@@ -55,11 +64,13 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const NewProductionPage(),
+                          builder: (_) =>
+                              const NewProductionPage(),
                         ),
                       );
                     },
                   ),
+
                   DashboardCard(
                     icon: Icons.menu_book_outlined,
                     title: "Mis Recetas",
@@ -67,23 +78,13 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const RecipesPage(),
+                          builder: (_) =>
+                              const RecipesPage(),
                         ),
                       );
                     },
                   ),
-                  DashboardCard(
-                    icon: Icons.inventory,
-                    title: "Ingredientes",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const IngredientsPage(),
-                        ),
-                      );
-                    },
-                  ),
+
                   DashboardCard(
                     icon: Icons.inventory_2_outlined,
                     title: "Inventario",
@@ -91,29 +92,35 @@ class DashboardPage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const InventoryPage(),
+                          builder: (_) =>
+                              const InventoryPage(),
                         ),
                       );
                     },
                   ),
+
                   DashboardCard(
                     icon: Icons.attach_money,
                     title: "Costos",
                     onTap: () {},
                   ),
+
                   DashboardCard(
                     icon: Icons.bar_chart,
                     title: "Reportes",
                     onTap: () {},
                   ),
+
                   DashboardCard(
                     icon: Icons.settings,
                     title: "Configuración",
                     onTap: () {},
                   ),
+
                 ],
               ),
             ),
+
           ],
         ),
       ),
@@ -148,7 +155,7 @@ class DashboardCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 48,
+              size: 42,
               color: const Color(0xFF8D6E63),
             ),
             const SizedBox(height: 12),
@@ -156,8 +163,8 @@ class DashboardCard extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 17,
                 fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ],

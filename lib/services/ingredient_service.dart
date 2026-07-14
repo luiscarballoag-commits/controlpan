@@ -1,50 +1,30 @@
+import 'package:hive/hive.dart';
+
 import '../models/ingredient_catalog.dart';
 
 class IngredientService {
-  static final List<IngredientCatalog> _ingredients = [];
+  static const String boxName = 'ingredients';
+
+  Box get _box => Hive.box(boxName);
 
   List<IngredientCatalog> getAllIngredients() {
-    return List.unmodifiable(_ingredients);
+    return _box.values
+        .cast<IngredientCatalog>()
+        .toList();
   }
 
   void addIngredient(IngredientCatalog ingredient) {
-    _ingredients.add(ingredient);
+    _box.add(ingredient);
   }
 
   void updateIngredient(
-    String id,
-    IngredientCatalog updatedIngredient,
+    int index,
+    IngredientCatalog ingredient,
   ) {
-    final index = _ingredients.indexWhere((i) => i.id == id);
-
-    if (index != -1) {
-      _ingredients[index] = updatedIngredient;
-    }
+    _box.putAt(index, ingredient);
   }
 
-  void deleteIngredient(String id) {
-    _ingredients.removeWhere((i) => i.id == id);
+  void deleteIngredient(int index) {
+    _box.deleteAt(index);
   }
-
-  IngredientCatalog? getIngredientById(String id) {
-    try {
-      return _ingredients.firstWhere((i) => i.id == id);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  List<IngredientCatalog> search(String text) {
-    if (text.isEmpty) {
-      return getAllIngredients();
-    }
-
-    return _ingredients.where((ingredient) {
-      return ingredient.name
-          .toLowerCase()
-          .contains(text.toLowerCase());
-    }).toList();
-  }
-
-  bool get isEmpty => _ingredients.isEmpty;
 }

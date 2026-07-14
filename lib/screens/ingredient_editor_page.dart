@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/ingredient_catalog.dart';
 import '../services/ingredient_service.dart';
 
@@ -12,9 +13,14 @@ class IngredientEditorPage extends StatefulWidget {
 
 class _IngredientEditorPageState
     extends State<IngredientEditorPage> {
+
   final _nameController = TextEditingController();
   final _categoryController = TextEditingController();
   final _unitController = TextEditingController();
+  final _priceController = TextEditingController();
+  final _stockController = TextEditingController();
+  final _minimumController = TextEditingController();
+  final _notesController = TextEditingController();
 
   final IngredientService ingredientService =
       IngredientService();
@@ -24,6 +30,10 @@ class _IngredientEditorPageState
     _nameController.dispose();
     _categoryController.dispose();
     _unitController.dispose();
+    _priceController.dispose();
+    _stockController.dispose();
+    _minimumController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -35,6 +45,13 @@ class _IngredientEditorPageState
       name: _nameController.text.trim(),
       category: _categoryController.text.trim(),
       unit: _unitController.text.trim(),
+      purchasePrice:
+          double.tryParse(_priceController.text) ?? 0,
+      stock:
+          double.tryParse(_stockController.text) ?? 0,
+      minimumStock:
+          double.tryParse(_minimumController.text) ?? 0,
+      notes: _notesController.text.trim(),
     );
 
     ingredientService.addIngredient(ingredient);
@@ -44,12 +61,14 @@ class _IngredientEditorPageState
 
   Widget buildField(
     String label,
-    TextEditingController controller,
-  ) {
+    TextEditingController controller, {
+    TextInputType keyboard = TextInputType.text,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 14),
       child: TextField(
         controller: controller,
+        keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
@@ -71,7 +90,7 @@ class _IngredientEditorPageState
           children: [
 
             buildField(
-              "Nombre del ingrediente",
+              "Nombre",
               _nameController,
             ),
 
@@ -83,6 +102,29 @@ class _IngredientEditorPageState
             buildField(
               "Unidad (kg, g, L, ml, und...)",
               _unitController,
+            ),
+
+            buildField(
+              "Precio de compra",
+              _priceController,
+              keyboard: const TextInputType.numberWithOptions(decimal: true),
+            ),
+
+            buildField(
+              "Stock actual",
+              _stockController,
+              keyboard: const TextInputType.numberWithOptions(decimal: true),
+            ),
+
+            buildField(
+              "Stock mínimo",
+              _minimumController,
+              keyboard: const TextInputType.numberWithOptions(decimal: true),
+            ),
+
+            buildField(
+              "Observaciones",
+              _notesController,
             ),
 
             const SizedBox(height: 25),

@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'models/ingredient_catalog.dart';
 import 'screens/dashboard_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(IngredientCatalogAdapter());
+
+  await Hive.openBox<IngredientCatalog>('ingredients');
+  await Hive.openBox('recipes');
+  await Hive.openBox('inventory');
+  await Hive.openBox('productions');
+  await Hive.openBox('costs');
+  await Hive.openBox('settings');
+
   runApp(const ControlPanApp());
 }
 

@@ -1,37 +1,34 @@
-/// =======================================================
-/// CONTROLPAN
-/// Archivo: ingredient_catalog.dart
-/// Descripción:
-/// Modelo del catálogo de ingredientes.
-/// Será utilizado por Recetas, Inventario,
-/// Producción y Estructura de Costos.
-/// =======================================================
+import 'package:hive/hive.dart';
 
-class IngredientCatalog {
+part 'ingredient_catalog.g.dart';
+
+@HiveType(typeId: 0)
+class IngredientCatalog extends HiveObject {
+  @HiveField(0)
   final String id;
 
-  /// Nombre del ingrediente
+  @HiveField(1)
   final String name;
 
-  /// Categoría
+  @HiveField(2)
   final String category;
 
-  /// Unidad de medida
+  @HiveField(3)
   final String unit;
 
-  /// Precio de compra
+  @HiveField(4)
   final double purchasePrice;
 
-  /// Cantidad disponible en inventario
+  @HiveField(5)
   final double stock;
 
-  /// Stock mínimo recomendado
+  @HiveField(6)
   final double minimumStock;
 
-  /// Observaciones
+  @HiveField(7)
   final String notes;
 
-  const IngredientCatalog({
+  IngredientCatalog({
     required this.id,
     required this.name,
     required this.category,
