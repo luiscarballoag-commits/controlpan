@@ -1,78 +1,32 @@
-import '../models/inventory_item.dart';
+import 'package:hive/hive.dart';
+
+import '../models/ingredient_catalog.dart';
 
 class InventoryService {
-  static final List<InventoryItem> _inventory = [];
+  final Box<IngredientCatalog> _box =
+      Hive.box<IngredientCatalog>('ingredients');
 
-  List<InventoryItem> getAllItems() {
-    return List.unmodifiable(_inventory);
+  List<IngredientCatalog> getAllItems() {
+    return _box.values.toList();
   }
 
-  void addItem(InventoryItem item) {
-    _inventory.add(item);
-  }
+  double getInventoryValue() {
+    double total = 0;
 
-  void updateItem(
-    String ingredientId,
-    InventoryItem updatedItem,
-  ) {
-    final index = _inventory.indexWhere(
-      (item) => item.ingredientId == ingredientId,
-    );
-
-    if (index != -1) {
-      _inventory[index] = updatedItem;
+    for (final item in _box.values) {
+      total += item.stock * item.purchasePrice;
     }
+
+    return total;
   }
 
-  void deleteItem(String ingredientId) {
-    _inventory.removeWhere(
-      (item) => item.ingredientId == ingredientId,
-    );
+  int getTotalIngredients() {
+    return _box.length;
   }
 
-  InventoryItem? getItem(String ingredientId) {
-    try {
-      return _inventory.firstWhere(
-        (item) => item.ingredientId == ingredientId,
-      );
-    } catch (_) {
-      return null;
-    }
+  List<IngredientCatalog> getLowStockItems() {
+    return _box.values
+        .where((item) => item.stock <= item.minimumStock)
+        .toList();
   }
-
-  void increaseStock(
-    String ingredientId,
-    double quantity,
-  ) {
-    final item = getItem(ingredientId);
-
-    if (item == null) return;
-
-    updateItem(
-      ingredientId,
-      item.copyWith(
-        stock: item.stock + quantity,
-        lastUpdated: DateTime.now(),
-      ),
-    );
-  }
-
-  void decreaseStock(
-    String ingredientId,
-    double quantity,
-  ) {
-    final item = getItem(ingredientId);
-
-    if (item == null) return;
-
-    updateItem(
-      ingredientId,
-      item.copyWith(
-        stock: item.stock - quantity,
-        lastUpdated: DateTime.now(),
-      ),
-    );
-  }
-
-  bool get isEmpty => _inventory.isEmpty;
 }

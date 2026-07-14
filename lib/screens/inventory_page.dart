@@ -1,24 +1,188 @@
 import 'package:flutter/material.dart';
 
+import '../services/inventory_service.dart';
+import 'ingredients_page.dart';
+import 'inventory_entry_page.dart';
+
 class InventoryPage extends StatelessWidget {
-  const InventoryPage({super.key});
+  InventoryPage({super.key});
+
+  final InventoryService inventoryService = InventoryService();
 
   @override
   Widget build(BuildContext context) {
+    final items = inventoryService.getAllItems();
+    final lowStock = inventoryService.getLowStockItems();
+    final inventoryValue = inventoryService.getInventoryValue();
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F1EB),
       appBar: AppBar(
-        title: const Text("Inventario"),
+        title: const Text("Inventario Inteligente"),
         centerTitle: true,
+        backgroundColor: const Color(0xFF8D6E63),
+        foregroundColor: Colors.white,
       ),
-      body: const Center(
-        child: Text(
-          "Inventario Inteligente\n\nPróximamente",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 22,
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildCard(
+            context,
+            icon: Icons.science_outlined,
+            color: Colors.orange,
+            title: "Catálogo de Ingredientes",
+            subtitle: "Administrar ingredientes",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const IngredientsPage(),
+                ),
+              );
+            },
+          ),
+
+          _buildCard(
+            context,
+            icon: Icons.add_box_outlined,
+            color: Colors.green,
+            title: "Registrar Entrada",
+            subtitle: "Comprar materia prima",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const InventoryEntryPage(),
+                ),
+              );
+            },
+          ),
+
+          _buildCard(
+            context,
+            icon: Icons.inventory_2_outlined,
+            color: Colors.blue,
+            title: "Stock Actual",
+            subtitle: "${items.length} ingredientes",
+            onTap: () {},
+          ),
+
+          _buildCard(
+            context,
+            icon: Icons.warning_amber_outlined,
+            color: Colors.red,
+            title: "Stock Bajo",
+            subtitle: "${lowStock.length} alertas",
+            onTap: () {},
+          ),
+
+          _buildCard(
+            context,
+            icon: Icons.attach_money,
+            color: Colors.teal,
+            title: "Valor del Inventario",
+            subtitle: "\$${inventoryValue.toStringAsFixed(2)}",
+            onTap: () {},
+          ),
+
+          const SizedBox(height: 25),
+
+          Card(
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const Text(
+                    "Resumen General",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ListTile(
+                    leading: const Icon(Icons.inventory),
+                    title: const Text("Ingredientes"),
+                    trailing: Text(items.length.toString()),
+                  ),
+
+                  const ListTile(
+                    leading: Icon(Icons.shopping_cart),
+                    title: Text("Entradas registradas"),
+                    trailing: Text("Próximamente"),
+                  ),
+
+                  ListTile(
+                    leading: const Icon(Icons.warning),
+                    title: const Text("Alertas"),
+                    trailing: Text(lowStock.length.toString()),
+                  ),
+
+                  const Divider(),
+
+                  ListTile(
+                    leading: const Icon(Icons.attach_money),
+                    title: const Text(
+                      "Valor del Inventario",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: Text(
+                      "\$${inventoryValue.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        color: Colors.green,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 15),
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color,
+          child: Icon(
+            icon,
+            color: Colors.white,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios),
+        onTap: onTap,
       ),
     );
   }
