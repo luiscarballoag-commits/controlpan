@@ -15,9 +15,7 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'ControlPan',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF8D6E63),
@@ -27,7 +25,6 @@ class DashboardPage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
@@ -49,19 +46,16 @@ class DashboardPage extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 25),
-
             Expanded(
               child: GridView.count(
                 crossAxisCount: 2,
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
                 children: [
-
                   DashboardCard(
                     icon: Icons.add_circle_outline,
-                    title: "Nueva Producción",
+                    title: 'Nueva Producción',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -71,10 +65,9 @@ class DashboardPage extends StatelessWidget {
                       );
                     },
                   ),
-
                   DashboardCard(
                     icon: Icons.menu_book_outlined,
-                    title: "Mis Recetas",
+                    title: 'Mis Recetas',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -84,10 +77,9 @@ class DashboardPage extends StatelessWidget {
                       );
                     },
                   ),
-
                   DashboardCard(
                     icon: Icons.science_outlined,
-                    title: "Ingredientes",
+                    title: 'Ingredientes',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -97,10 +89,9 @@ class DashboardPage extends StatelessWidget {
                       );
                     },
                   ),
-
                   DashboardCard(
                     icon: Icons.inventory_2_outlined,
-                    title: "Inventario",
+                    title: 'Inventario',
                     onTap: () {
                       Navigator.push(
                         context,
@@ -110,35 +101,29 @@ class DashboardPage extends StatelessWidget {
                       );
                     },
                   ),
-
                   DashboardCard(
                     icon: Icons.calculate_outlined,
-                    title: "Calculadora",
+                    title: 'Calculadora',
                     onTap: () {},
                   ),
-
                   DashboardCard(
-                    icon: Icons.attach_money,
-                    title: "Costos",
+                    icon: Icons.attach_money_outlined,
+                    title: 'Costos',
                     onTap: () {},
                   ),
-
                   DashboardCard(
-                    icon: Icons.bar_chart,
-                    title: "Reportes",
+                    icon: Icons.bar_chart_outlined,
+                    title: 'Reportes',
                     onTap: () {},
                   ),
-
                   DashboardCard(
-                    icon: Icons.settings,
-                    title: "Configuración",
+                    icon: Icons.settings_outlined,
+                    title: 'Configuración',
                     onTap: () {},
                   ),
-
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -190,3 +175,4 @@ class DashboardCard extends StatelessWidget {
       ),
     );
   }
+}
