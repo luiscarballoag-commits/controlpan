@@ -55,7 +55,6 @@ class _InventoryEntryPageState
   }
 
   void saveEntry() {
-
     if (selectedIngredient == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -80,7 +79,6 @@ class _InventoryEntryPageState
 
   @override
   Widget build(BuildContext context) {
-
     final ingredients =
         ingredientService.getAllIngredients();
 
@@ -89,28 +87,23 @@ class _InventoryEntryPageState
         title: const Text("Entrada de Inventario"),
         centerTitle: true,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           children: [
 
             DropdownButtonFormField<IngredientCatalog>(
-              value: selectedIngredient,
+              initialValue: selectedIngredient,
               decoration: const InputDecoration(
                 labelText: "Ingrediente",
                 border: OutlineInputBorder(),
               ),
               items: ingredients.map((ingredient) {
-
                 return DropdownMenuItem(
                   value: ingredient,
                   child: Text(ingredient.name),
                 );
-
               }).toList(),
-
               onChanged: (value) {
                 setState(() {
                   selectedIngredient = value;
