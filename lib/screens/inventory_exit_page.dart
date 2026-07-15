@@ -1,51 +1,44 @@
 import 'package:flutter/material.dart';
 
 import '../models/ingredient_catalog.dart';
-import '../models/inventory_movement.dart';
 import '../services/ingredient_service.dart';
-import '../services/inventory_movement_service.dart';
 
-class InventoryEntryPage extends StatefulWidget {
-  const InventoryEntryPage({super.key});
+class InventoryExitPage extends StatefulWidget {
+  const InventoryExitPage({super.key});
 
   @override
-  State<InventoryEntryPage> createState() =>
-      _InventoryEntryPageState();
+  State<InventoryExitPage> createState() =>
+      _InventoryExitPageState();
 }
 
-class _InventoryEntryPageState
-    extends State<InventoryEntryPage> {
+class _InventoryExitPageState
+    extends State<InventoryExitPage> {
 
   final IngredientService ingredientService =
       IngredientService();
 
-  final InventoryMovementService movementService =
-      InventoryMovementService();
-
   IngredientCatalog? selectedIngredient;
   int? selectedIndex;
 
+  String? selectedReason;
+
   final _quantityController =
-      TextEditingController();
-
-  final _priceController =
-      TextEditingController();
-
-  final _supplierController =
-      TextEditingController();
-
-  final _invoiceController =
       TextEditingController();
 
   final _notesController =
       TextEditingController();
 
+  final List<String> reasons = [
+    "Producción",
+    "Venta",
+    "Daño",
+    "Ajuste",
+    "Otro",
+  ];
+
   @override
   void dispose() {
     _quantityController.dispose();
-    _priceController.dispose();
-    _supplierController.dispose();
-    _invoiceController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -55,21 +48,26 @@ class _InventoryEntryPageState
     TextEditingController controller, {
     TextInputType keyboard =
         TextInputType.text,
+    IconData? icon,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding:
+          const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          prefixIcon:
+              icon == null ? null : Icon(icon),
+          border:
+              const OutlineInputBorder(),
         ),
       ),
     );
   }
 
-  void saveEntry() {
+  void saveExit() {
 
     if (selectedIngredient == null ||
         selectedIndex == null) {
@@ -86,11 +84,52 @@ class _InventoryEntryPageState
       return;
     }
 
+    if (selectedReason == null) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Seleccione un motivo",
+          ),
+        ),
+      );
+
+      return;
+    }
+
     final quantity =
         double.tryParse(
               _quantityController.text,
             ) ??
-            0;
+            0;    if (quantity <= 0) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Ingrese una cantidad válida",
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    if (quantity >
+        selectedIngredient!.stock) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Stock insuficiente para realizar la salida.",
+          ),
+        ),
+      );
+
+      return;
+    }
 
     final updatedIngredient =
         IngredientCatalog(
@@ -98,15 +137,13 @@ class _InventoryEntryPageState
       name: selectedIngredient!.name,
       category:
           selectedIngredient!.category,
-      unit: selectedIngredient!.unit,
+      unit:
+          selectedIngredient!.unit,
       purchasePrice:
-          double.tryParse(
-                _priceController.text,
-              ) ??
-              selectedIngredient!
-                  .purchasePrice,
+          selectedIngredient!
+              .purchasePrice,
       stock:
-          selectedIngredient!.stock +
+          selectedIngredient!.stock -
               quantity,
       minimumStock:
           selectedIngredient!
@@ -120,33 +157,19 @@ class _InventoryEntryPageState
       updatedIngredient,
     );
 
-    movementService.addMovement(
-      InventoryMovement(
-        id: DateTime.now()
-            .millisecondsSinceEpoch
-            .toString(),
-        date: DateTime.now(),
-        type: "Entrada",
-        ingredient:
-            updatedIngredient.name,
-        quantity: quantity,
-        unit: updatedIngredient.unit,
-        reason: "Compra",
-        notes: _notesController.text,
-      ),
-    );
-
     ScaffoldMessenger.of(context)
         .showSnackBar(
       SnackBar(
         content: Text(
-          "Se agregaron ${quantity.toStringAsFixed(2)} ${selectedIngredient!.unit} a ${selectedIngredient!.name}",
+          "Se descontaron ${quantity.toStringAsFixed(2)} ${selectedIngredient!.unit} de ${selectedIngredient!.name}",
         ),
       ),
     );
 
     Navigator.pop(context);
-  }  @override
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     final ingredients =
@@ -155,19 +178,19 @@ class _InventoryEntryPageState
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Entrada de Inventario",
+          "Salida de Inventario",
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         child: Column(
-          children: [
-
-            DropdownButtonFormField<IngredientCatalog>(
+          children: [            DropdownButtonFormField<IngredientCatalog>(
               initialValue: selectedIngredient,
               decoration: const InputDecoration(
                 labelText: "Ingrediente",
+                prefixIcon: Icon(Icons.science),
                 border: OutlineInputBorder(),
               ),
               items: List.generate(
@@ -201,6 +224,29 @@ class _InventoryEntryPageState
 
             const SizedBox(height: 16),
 
+            DropdownButtonFormField<String>(
+              initialValue: selectedReason,
+              decoration: const InputDecoration(
+                labelText: "Motivo de la salida",
+                prefixIcon:
+                    Icon(Icons.assignment_outlined),
+                border: OutlineInputBorder(),
+              ),
+              items: reasons.map((reason) {
+                return DropdownMenuItem(
+                  value: reason,
+                  child: Text(reason),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedReason = value;
+                });
+              },
+            ),
+
+            const SizedBox(height: 16),
+
             buildField(
               "Cantidad",
               _quantityController,
@@ -209,51 +255,33 @@ class _InventoryEntryPageState
                       .numberWithOptions(
                 decimal: true,
               ),
-            ),
-
-            buildField(
-              "Precio Unitario",
-              _priceController,
-              keyboard:
-                  const TextInputType
-                      .numberWithOptions(
-                decimal: true,
-              ),
-            ),
-
-            buildField(
-              "Proveedor",
-              _supplierController,
-            ),
-
-            buildField(
-              "Número de Factura",
-              _invoiceController,
+              icon: Icons.scale,
             ),
 
             buildField(
               "Observaciones",
               _notesController,
+              icon: Icons.notes,
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton.icon(
+                onPressed: saveExit,
                 icon: const Icon(
-                  Icons.save,
+                  Icons.remove_circle_outline,
                 ),
                 label: const Text(
-                  "REGISTRAR ENTRADA",
+                  "REGISTRAR SALIDA",
                   style: TextStyle(
+                    fontSize: 18,
                     fontWeight:
                         FontWeight.bold,
-                    fontSize: 18,
                   ),
                 ),
-                onPressed: saveEntry,
               ),
             ),
 

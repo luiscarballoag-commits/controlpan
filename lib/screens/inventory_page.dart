@@ -26,6 +26,7 @@ class InventoryPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+
           _buildCard(
             context,
             icon: Icons.science_outlined,
@@ -59,6 +60,22 @@ class InventoryPage extends StatelessWidget {
           ),
 
           _buildCard(
+            context,
+            icon: Icons.remove_circle_outline,
+            color: Colors.deepOrange,
+            title: "Registrar Salida",
+            subtitle: "Consumo y ajustes",
+            onTap: () {},
+          ),
+
+          _buildCard(
+            context,
+            icon: Icons.history,
+            color: Colors.indigo,
+            title: "Historial de Movimientos",
+            subtitle: "Entradas y salidas",
+            onTap: () {},
+          ),          _buildCard(
             context,
             icon: Icons.inventory_2_outlined,
             color: Colors.blue,
@@ -96,6 +113,7 @@ class InventoryPage extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
+
                   const Text(
                     "Resumen General",
                     style: TextStyle(
@@ -107,27 +125,56 @@ class InventoryPage extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   ListTile(
-                    leading: const Icon(Icons.inventory),
+                    leading: const Icon(
+                      Icons.inventory,
+                      color: Colors.blue,
+                    ),
                     title: const Text("Ingredientes"),
-                    trailing: Text(items.length.toString()),
+                    trailing: Text(
+                      items.length.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
 
                   const ListTile(
-                    leading: Icon(Icons.shopping_cart),
+                    leading: Icon(
+                      Icons.input,
+                      color: Colors.green,
+                    ),
                     title: Text("Entradas registradas"),
                     trailing: Text("Próximamente"),
                   ),
 
-                  ListTile(
-                    leading: const Icon(Icons.warning),
+                  const ListTile(
+                    leading: Icon(
+                      Icons.output,
+                      color: Colors.deepOrange,
+                    ),
+                    title: Text("Salidas registradas"),
+                    trailing: Text("Próximamente"),
+                  ),                  ListTile(
+                    leading: const Icon(
+                      Icons.warning,
+                      color: Colors.red,
+                    ),
                     title: const Text("Alertas"),
-                    trailing: Text(lowStock.length.toString()),
+                    trailing: Text(
+                      lowStock.length.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
 
-                  const Divider(),
+                  const Divider(height: 30),
 
                   ListTile(
-                    leading: const Icon(Icons.attach_money),
+                    leading: const Icon(
+                      Icons.attach_money,
+                      color: Colors.green,
+                    ),
                     title: const Text(
                       "Valor del Inventario",
                       style: TextStyle(
@@ -167,7 +214,12 @@ class InventoryPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 10,
+        ),
         leading: CircleAvatar(
+          radius: 24,
           backgroundColor: color,
           child: Icon(
             icon,
@@ -178,10 +230,17 @@ class InventoryPage extends StatelessWidget {
           title,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.arrow_forward_ios),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(subtitle),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 18,
+        ),
         onTap: onTap,
       ),
     );

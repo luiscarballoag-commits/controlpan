@@ -4,76 +4,150 @@ import '../models/ingredient_catalog.dart';
 import '../services/ingredient_service.dart';
 
 class IngredientEditorPage extends StatefulWidget {
-  const IngredientEditorPage({super.key});
+  final IngredientCatalog? ingredient;
+  final int? index;
+
+  const IngredientEditorPage({
+    super.key,
+    this.ingredient,
+    this.index,
+  });
 
   @override
   State<IngredientEditorPage> createState() =>
       _IngredientEditorPageState();
 }
 
-class _IngredientEditorPageState extends State<IngredientEditorPage> {
+class _IngredientEditorPageState
+    extends State<IngredientEditorPage> {
+
   final _nameController = TextEditingController();
+  final _categoryController = TextEditingController();
+  final _unitController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockController = TextEditingController();
   final _minimumController = TextEditingController();
   final _notesController = TextEditingController();
 
-  String? _selectedCategory;
-  String? _selectedUnit;
+  String? selectedCategory;
+  String? selectedUnit;
 
-  final List<String> _categories = [
-    'Harinas',
-    'Azúcares',
-    'Grasas',
-    'Lácteos',
-    'Levaduras',
-    'Mejoradores',
-    'Esencias',
-    'Sales',
-    'Líquidos',
-    'Otros',
+  final categories = [
+    "Harinas",
+    "Azúcares",
+    "Grasas",
+    "Levaduras",
+    "Lácteos",
+    "Esencias",
+    "Mejoradores",
+    "Otros",
   ];
 
-  final List<String> _units = [
-    'kg',
-    'g',
-    'L',
-    'ml',
-    'Unidad',
-    'Caja',
-    'Saco',
+  final units = [
+    "kg",
+    "g",
+    "L",
+    "ml",
+    "Unidad",
+    "Caja",
+    "Saco",
   ];
 
-  final IngredientService ingredientService = IngredientService();
+  final IngredientService ingredientService =
+      IngredientService();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.ingredient != null) {
+
+      _nameController.text =
+          widget.ingredient!.name;
+
+      selectedCategory =
+          widget.ingredient!.category;
+
+      selectedUnit =
+          widget.ingredient!.unit;
+
+      _priceController.text =
+          widget.ingredient!.purchasePrice.toString();
+
+      _stockController.text =
+          widget.ingredient!.stock.toString();
+
+      _minimumController.text =
+          widget.ingredient!.minimumStock.toString();
+
+      _notesController.text =
+          widget.ingredient!.notes;
+    }
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _categoryController.dispose();
+    _unitController.dispose();
     _priceController.dispose();
     _stockController.dispose();
     _minimumController.dispose();
     _notesController.dispose();
     super.dispose();
-  }
+  }  void saveIngredient() {
 
-  void saveIngredient() {
-    if (_nameController.text.trim().isEmpty) return;
+    if (_nameController.text.trim().isEmpty) {
+      return;
+    }
 
     final ingredient = IngredientCatalog(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: widget.ingredient?.id ??
+          DateTime.now()
+              .millisecondsSinceEpoch
+              .toString(),
+
       name: _nameController.text.trim(),
-      category: _selectedCategory ?? '',
-      unit: _selectedUnit ?? '',
+
+      category: selectedCategory ?? "",
+
+      unit: selectedUnit ?? "",
+
       purchasePrice:
-          double.tryParse(_priceController.text) ?? 0,
+          double.tryParse(
+                _priceController.text,
+              ) ??
+              0,
+
       stock:
-          double.tryParse(_stockController.text) ?? 0,
+          double.tryParse(
+                _stockController.text,
+              ) ??
+              0,
+
       minimumStock:
-          double.tryParse(_minimumController.text) ?? 0,
+          double.tryParse(
+                _minimumController.text,
+              ) ??
+              0,
+
       notes: _notesController.text.trim(),
     );
 
-    ingredientService.addIngredient(ingredient);
+    if (widget.index == null) {
+
+      ingredientService.addIngredient(
+        ingredient,
+      );
+
+    } else {
+
+      ingredientService.updateIngredient(
+        widget.index!,
+        ingredient,
+      );
+
+    }
 
     Navigator.pop(context);
   }
@@ -81,27 +155,33 @@ class _IngredientEditorPageState extends State<IngredientEditorPage> {
   Widget buildField(
     String label,
     TextEditingController controller, {
-    TextInputType keyboard = TextInputType.text,
-    IconData? icon,
+    TextInputType keyboard =
+        TextInputType.text,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(
+        bottom: 14,
+      ),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: icon != null ? Icon(icon) : null,
-          border: const OutlineInputBorder(),
+          border:
+              const OutlineInputBorder(),
         ),
       ),
     );
   }
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) {    return Scaffold(
       appBar: AppBar(
-        title: const Text("Nuevo Ingrediente"),
+        title: Text(
+          widget.index == null
+              ? "Nuevo Ingrediente"
+              : "Editar Ingrediente",
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -112,54 +192,49 @@ class _IngredientEditorPageState extends State<IngredientEditorPage> {
             buildField(
               "Nombre",
               _nameController,
-              icon: Icons.inventory_2,
             ),
 
-            Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: DropdownButtonFormField<String>(
-                initialValue: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: "Categoría",
-                  prefixIcon: Icon(Icons.category),
-                  border: OutlineInputBorder(),
-                ),
-                items: _categories.map((category) {
-                  return DropdownMenuItem<String>(
-                    value: category,
-                    child: Text(category),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCategory = value;
-                  });
-                },
+            DropdownButtonFormField<String>(
+              initialValue: selectedCategory,
+              decoration: const InputDecoration(
+                labelText: "Categoría",
+                border: OutlineInputBorder(),
               ),
+              items: categories.map((category) {
+                return DropdownMenuItem(
+                  value: category,
+                  child: Text(category),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCategory = value;
+                });
+              },
             ),
 
-            Padding(
-              padding: const EdgeInsets.only(bottom: 14),
-              child: DropdownButtonFormField<String>(
-                initialValue: _selectedUnit,
-                decoration: const InputDecoration(
-                  labelText: "Unidad",
-                  prefixIcon: Icon(Icons.straighten),
-                  border: OutlineInputBorder(),
-                ),
-                items: _units.map((unit) {
-                  return DropdownMenuItem<String>(
-                    value: unit,
-                    child: Text(unit),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedUnit = value;
-                  });
-                },
+            const SizedBox(height: 14),
+
+            DropdownButtonFormField<String>(
+              initialValue: selectedUnit,
+              decoration: const InputDecoration(
+                labelText: "Unidad",
+                border: OutlineInputBorder(),
               ),
+              items: units.map((unit) {
+                return DropdownMenuItem(
+                  value: unit,
+                  child: Text(unit),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedUnit = value;
+                });
+              },
             ),
+
+            const SizedBox(height: 14),
 
             buildField(
               "Precio de compra",
@@ -167,7 +242,6 @@ class _IngredientEditorPageState extends State<IngredientEditorPage> {
               keyboard: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              icon: Icons.attach_money,
             ),
 
             buildField(
@@ -176,20 +250,19 @@ class _IngredientEditorPageState extends State<IngredientEditorPage> {
               keyboard: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              icon: Icons.warehouse,
-            ),            buildField(
+            ),
+
+            buildField(
               "Stock mínimo",
               _minimumController,
               keyboard: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              icon: Icons.warning_amber_rounded,
             ),
 
             buildField(
               "Observaciones",
               _notesController,
-              icon: Icons.notes,
             ),
 
             const SizedBox(height: 25),
@@ -197,12 +270,13 @@ class _IngredientEditorPageState extends State<IngredientEditorPage> {
             SizedBox(
               width: double.infinity,
               height: 55,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: saveIngredient,
-                icon: const Icon(Icons.save),
-                label: const Text(
-                  "GUARDAR INGREDIENTE",
-                  style: TextStyle(
+                child: Text(
+                  widget.index == null
+                      ? "GUARDAR INGREDIENTE"
+                      : "ACTUALIZAR INGREDIENTE",
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
