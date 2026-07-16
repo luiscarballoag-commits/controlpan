@@ -3,6 +3,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'models/ingredient_catalog.dart';
+import 'models/inventory_movement.dart';
+
 import 'screens/home_page.dart';
 
 Future<void> main() async {
@@ -11,16 +13,27 @@ Future<void> main() async {
   await Hive.initFlutter();
   await initializeDateFormatting('es');
 
-  Hive.registerAdapter(IngredientCatalogAdapter());
+  Hive.registerAdapter(
+    IngredientCatalogAdapter(),
+  );
 
-  await Hive.openBox<IngredientCatalog>('ingredients');
+  Hive.registerAdapter(
+    InventoryMovementAdapter(),
+  );
+
+  await Hive.openBox<IngredientCatalog>(
+    'ingredients',
+  );
+
+  await Hive.openBox<InventoryMovement>(
+    'inventory_movements',
+  );
+
   await Hive.openBox('recipes');
   await Hive.openBox('inventory');
   await Hive.openBox('productions');
   await Hive.openBox('costs');
-  await Hive.openBox('settings');
-
-  runApp(const ControlPanApp());
+  await Hive.openBox('settings');  runApp(const ControlPanApp());
 }
 
 class ControlPanApp extends StatelessWidget {
@@ -32,7 +45,9 @@ class ControlPanApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'ControlPan',
       theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF8D6E63),
+        colorSchemeSeed: const Color(
+          0xFF8D6E63,
+        ),
         useMaterial3: true,
       ),
       home: const HomePage(),
