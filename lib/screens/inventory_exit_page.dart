@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/ingredient_catalog.dart';
+import '../models/inventory_movement.dart';
 import '../services/ingredient_service.dart';
+import '../services/inventory_movement_service.dart';
 
 class InventoryExitPage extends StatefulWidget {
   const InventoryExitPage({super.key});
@@ -17,7 +19,11 @@ class _InventoryExitPageState
   final IngredientService ingredientService =
       IngredientService();
 
+  final InventoryMovementService movementService =
+      InventoryMovementService();
+
   IngredientCatalog? selectedIngredient;
+
   int? selectedIndex;
 
   String? selectedReason;
@@ -51,8 +57,7 @@ class _InventoryExitPageState
     IconData? icon,
   }) {
     return Padding(
-      padding:
-          const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
@@ -60,8 +65,7 @@ class _InventoryExitPageState
           labelText: label,
           prefixIcon:
               icon == null ? null : Icon(icon),
-          border:
-              const OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
@@ -102,7 +106,9 @@ class _InventoryExitPageState
         double.tryParse(
               _quantityController.text,
             ) ??
-            0;    if (quantity <= 0) {
+            0;
+
+    if (quantity <= 0) {
 
       ScaffoldMessenger.of(context)
           .showSnackBar(
@@ -123,7 +129,7 @@ class _InventoryExitPageState
           .showSnackBar(
         const SnackBar(
           content: Text(
-            "Stock insuficiente para realizar la salida.",
+            "Stock insuficiente",
           ),
         ),
       );
@@ -137,11 +143,9 @@ class _InventoryExitPageState
       name: selectedIngredient!.name,
       category:
           selectedIngredient!.category,
-      unit:
-          selectedIngredient!.unit,
+      unit: selectedIngredient!.unit,
       purchasePrice:
-          selectedIngredient!
-              .purchasePrice,
+          selectedIngredient!.purchasePrice,
       stock:
           selectedIngredient!.stock -
               quantity,
@@ -157,19 +161,33 @@ class _InventoryExitPageState
       updatedIngredient,
     );
 
+    movementService.addMovement(
+      InventoryMovement(
+        id: DateTime.now()
+            .millisecondsSinceEpoch
+            .toString(),
+        date: DateTime.now(),
+        type: "Salida",
+        ingredient:
+            updatedIngredient.name,
+        quantity: quantity,
+        unit: updatedIngredient.unit,
+        reason: selectedReason!,
+        notes: _notesController.text,
+      ),
+    );
+
     ScaffoldMessenger.of(context)
         .showSnackBar(
       SnackBar(
         content: Text(
-          "Se descontaron ${quantity.toStringAsFixed(2)} ${selectedIngredient!.unit} de ${selectedIngredient!.name}",
+          "Se descontaron ${quantity.toStringAsFixed(2)} ${updatedIngredient.unit} de ${updatedIngredient.name}",
         ),
       ),
     );
 
     Navigator.pop(context);
-  }
-
-  @override
+  }  @override
   Widget build(BuildContext context) {
 
     final ingredients =
@@ -183,10 +201,11 @@ class _InventoryExitPageState
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          children: [            DropdownButtonFormField<IngredientCatalog>(
+          children: [
+
+            DropdownButtonFormField<IngredientCatalog>(
               initialValue: selectedIngredient,
               decoration: const InputDecoration(
                 labelText: "Ingrediente",
@@ -228,8 +247,9 @@ class _InventoryExitPageState
               initialValue: selectedReason,
               decoration: const InputDecoration(
                 labelText: "Motivo de la salida",
-                prefixIcon:
-                    Icon(Icons.assignment_outlined),
+                prefixIcon: Icon(
+                  Icons.assignment_outlined,
+                ),
                 border: OutlineInputBorder(),
               ),
               items: reasons.map((reason) {
@@ -264,24 +284,24 @@ class _InventoryExitPageState
               icon: Icons.notes,
             ),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
 
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton.icon(
-                onPressed: saveExit,
                 icon: const Icon(
                   Icons.remove_circle_outline,
                 ),
                 label: const Text(
                   "REGISTRAR SALIDA",
                   style: TextStyle(
-                    fontSize: 18,
                     fontWeight:
                         FontWeight.bold,
+                    fontSize: 18,
                   ),
                 ),
+                onPressed: saveExit,
               ),
             ),
 

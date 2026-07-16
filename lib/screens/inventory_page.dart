@@ -1,43 +1,83 @@
 import 'package:flutter/material.dart';
 
 import '../services/inventory_service.dart';
+import '../services/inventory_movement_service.dart';
+
 import 'ingredients_page.dart';
 import 'inventory_entry_page.dart';
+import 'inventory_exit_page.dart';
+import 'inventory_history_page.dart';
 
 class InventoryPage extends StatelessWidget {
   InventoryPage({super.key});
 
-  final InventoryService inventoryService = InventoryService();
+  final InventoryService inventoryService =
+      InventoryService();
+
+  final InventoryMovementService
+      movementService =
+      InventoryMovementService();
 
   @override
   Widget build(BuildContext context) {
-    final items = inventoryService.getAllItems();
-    final lowStock = inventoryService.getLowStockItems();
-    final inventoryValue = inventoryService.getInventoryValue();
+
+    final items =
+        inventoryService.getAllItems();
+
+    final lowStock =
+        inventoryService.getLowStockItems();
+
+    final inventoryValue =
+        inventoryService.getInventoryValue();
+
+    final movements =
+        movementService.getAllMovements();
+
+    final totalEntries =
+        movements
+            .where(
+              (m) => m.type == "Entrada",
+            )
+            .length;
+
+    final totalExits =
+        movements
+            .where(
+              (m) => m.type == "Salida",
+            )
+            .length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F1EB),
+      backgroundColor:
+          const Color(0xFFF5F1EB),
       appBar: AppBar(
-        title: const Text("Inventario Inteligente"),
+        title: const Text(
+          "Inventario Inteligente",
+        ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF8D6E63),
+        backgroundColor:
+            const Color(0xFF8D6E63),
         foregroundColor: Colors.white,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         children: [
 
           _buildCard(
             context,
             icon: Icons.science_outlined,
             color: Colors.orange,
-            title: "Catálogo de Ingredientes",
-            subtitle: "Administrar ingredientes",
+            title:
+                "Catálogo de Ingredientes",
+            subtitle:
+                "Administrar ingredientes",
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const IngredientsPage(),
+                  builder: (_) =>
+                      const IngredientsPage(),
                 ),
               );
             },
@@ -47,13 +87,16 @@ class InventoryPage extends StatelessWidget {
             context,
             icon: Icons.add_box_outlined,
             color: Colors.green,
-            title: "Registrar Entrada",
-            subtitle: "Comprar materia prima",
+            title:
+                "Registrar Entrada",
+            subtitle:
+                "Comprar materia prima",
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const InventoryEntryPage(),
+                  builder: (_) =>
+                      const InventoryEntryPage(),
                 ),
               );
             },
@@ -61,35 +104,62 @@ class InventoryPage extends StatelessWidget {
 
           _buildCard(
             context,
-            icon: Icons.remove_circle_outline,
+            icon:
+                Icons.remove_circle_outline,
             color: Colors.deepOrange,
-            title: "Registrar Salida",
-            subtitle: "Consumo y ajustes",
-            onTap: () {},
+            title:
+                "Registrar Salida",
+            subtitle:
+                "Consumo y ajustes",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const InventoryExitPage(),
+                ),
+              );
+            },
           ),
 
           _buildCard(
             context,
             icon: Icons.history,
             color: Colors.indigo,
-            title: "Historial de Movimientos",
-            subtitle: "Entradas y salidas",
-            onTap: () {},
-          ),          _buildCard(
+            title:
+                "Historial de Movimientos",
+            subtitle:
+                "Entradas y salidas",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      const InventoryHistoryPage(),
+                ),
+              );
+            },
+          ),
+
+          _buildCard(
             context,
-            icon: Icons.inventory_2_outlined,
+            icon:
+                Icons.inventory_2_outlined,
             color: Colors.blue,
             title: "Stock Actual",
-            subtitle: "${items.length} ingredientes",
+            subtitle:
+                "${items.length} ingredientes",
             onTap: () {},
           ),
 
           _buildCard(
             context,
-            icon: Icons.warning_amber_outlined,
+            icon:
+                Icons.warning_amber_outlined,
             color: Colors.red,
             title: "Stock Bajo",
-            subtitle: "${lowStock.length} alertas",
+            subtitle:
+                "${lowStock.length} alertas",
             onTap: () {},
           ),
 
@@ -97,8 +167,10 @@ class InventoryPage extends StatelessWidget {
             context,
             icon: Icons.attach_money,
             color: Colors.teal,
-            title: "Valor del Inventario",
-            subtitle: "\$${inventoryValue.toStringAsFixed(2)}",
+            title:
+                "Valor del Inventario",
+            subtitle:
+                "\$${inventoryValue.toStringAsFixed(2)}",
             onTap: () {},
           ),
 
@@ -106,11 +178,14 @@ class InventoryPage extends StatelessWidget {
 
           Card(
             elevation: 5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+            shape:
+                RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(18),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding:
+                  const EdgeInsets.all(20),
               child: Column(
                 children: [
 
@@ -118,57 +193,88 @@ class InventoryPage extends StatelessWidget {
                     "Resumen General",
                     style: TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                          FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
                   ListTile(
                     leading: const Icon(
                       Icons.inventory,
                       color: Colors.blue,
                     ),
-                    title: const Text("Ingredientes"),
+                    title: const Text(
+                      "Ingredientes",
+                    ),
                     trailing: Text(
                       items.length.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                      style:
+                          const TextStyle(
+                        fontWeight:
+                            FontWeight.bold,
                       ),
                     ),
                   ),
 
-                  const ListTile(
-                    leading: Icon(
+                  ListTile(
+                    leading: const Icon(
                       Icons.input,
                       color: Colors.green,
                     ),
-                    title: Text("Entradas registradas"),
-                    trailing: Text("Próximamente"),
+                    title: const Text(
+                      "Entradas registradas",
+                    ),
+                    trailing: Text(
+                      totalEntries.toString(),
+                      style:
+                          const TextStyle(
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
+                    ),
                   ),
 
-                  const ListTile(
-                    leading: Icon(
+                  ListTile(
+                    leading: const Icon(
                       Icons.output,
-                      color: Colors.deepOrange,
+                      color:
+                          Colors.deepOrange,
                     ),
-                    title: Text("Salidas registradas"),
-                    trailing: Text("Próximamente"),
+                    title: const Text(
+                      "Salidas registradas",
+                    ),
+                    trailing: Text(
+                      totalExits.toString(),
+                      style:
+                          const TextStyle(
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
+                    ),
                   ),                  ListTile(
                     leading: const Icon(
                       Icons.warning,
                       color: Colors.red,
                     ),
-                    title: const Text("Alertas"),
+                    title: const Text(
+                      "Alertas",
+                    ),
                     trailing: Text(
                       lowStock.length.toString(),
                       style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                            FontWeight.bold,
                       ),
                     ),
                   ),
 
-                  const Divider(height: 30),
+                  const Divider(
+                    height: 30,
+                  ),
 
                   ListTile(
                     leading: const Icon(
@@ -178,7 +284,8 @@ class InventoryPage extends StatelessWidget {
                     title: const Text(
                       "Valor del Inventario",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                            FontWeight.bold,
                       ),
                     ),
                     trailing: Text(
@@ -186,7 +293,8 @@ class InventoryPage extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.green,
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                            FontWeight.bold,
                       ),
                     ),
                   ),
@@ -208,13 +316,17 @@ class InventoryPage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(
+        bottom: 15,
+      ),
       elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius:
+            BorderRadius.circular(18),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding:
+            const EdgeInsets.symmetric(
           horizontal: 18,
           vertical: 10,
         ),
@@ -229,12 +341,15 @@ class InventoryPage extends StatelessWidget {
         title: Text(
           title,
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight:
+                FontWeight.bold,
             fontSize: 16,
           ),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(
+            top: 4,
+          ),
           child: Text(subtitle),
         ),
         trailing: const Icon(
