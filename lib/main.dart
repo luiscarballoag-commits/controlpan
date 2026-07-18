@@ -3,9 +3,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'models/ingredient_catalog.dart';
+import 'models/inventory_movement.dart';
+import 'models/production.dart';
 import 'models/recipe.dart';
 import 'models/recipe_ingredient.dart';
-import 'models/production.dart';
 import 'screens/home_page.dart';
 
 Future<void> main() async {
@@ -18,15 +19,18 @@ Future<void> main() async {
   Hive.registerAdapter(RecipeIngredientAdapter());
   Hive.registerAdapter(RecipeAdapter());
   Hive.registerAdapter(ProductionAdapter());
+  Hive.registerAdapter(InventoryMovementAdapter());
 
   await Hive.openBox<IngredientCatalog>('ingredients');
   await Hive.openBox<Recipe>('recipes');
   await Hive.openBox<Production>('productions');
+  await Hive.openBox<InventoryMovement>(
+    'inventory_movements',
+  );
 
   await Hive.openBox('inventory');
   await Hive.openBox('costs');
   await Hive.openBox('settings');
-  await Hive.openBox('inventory_movements');
 
   runApp(const ControlPanApp());
 }

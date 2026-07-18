@@ -1,20 +1,20 @@
-import '../models/inventory_item.dart';
+import '../models/ingredient_catalog.dart';
 import '../models/production.dart';
-import 'inventory_service.dart';
-import 'production_service.dart';
+import '../services/ingredient_service.dart';
+import '../services/production_service.dart';
 
 class DashboardService {
   final ProductionService productionService =
       ProductionService();
 
-  final InventoryService inventoryService =
-      InventoryService();
+  final IngredientService ingredientService =
+      IngredientService();
 
   List<Production> get productions =>
       productionService.getAllProductions();
 
-  List<InventoryItem> get inventory =>
-      inventoryService.getAllItems();
+  List<IngredientCatalog> get inventory =>
+      ingredientService.getAllIngredients();
 
   int get productionsToday {
     final now = DateTime.now();
@@ -86,7 +86,9 @@ class DashboardService {
     }
 
     return total;
-  }  double get inventoryValue {
+  }
+
+  double get inventoryValue {
     double total = 0;
 
     for (final item in inventory) {
@@ -94,9 +96,7 @@ class DashboardService {
     }
 
     return total;
-  }
-
-  Production? get lastProduction {
+  }  Production? get lastProduction {
     if (productions.isEmpty) {
       return null;
     }
