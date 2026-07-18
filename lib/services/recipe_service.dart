@@ -1,34 +1,41 @@
+import 'package:hive/hive.dart';
+
 import '../models/recipe.dart';
 
 class RecipeService {
-  static final List<Recipe> _recipes = [];
+  final Box<Recipe> _box = Hive.box<Recipe>('recipes');
 
   List<Recipe> getAllRecipes() {
-    return List.unmodifiable(_recipes);
+    return _box.values.toList();
   }
 
   void addRecipe(Recipe recipe) {
-    _recipes.add(recipe);
+    _box.add(recipe);
   }
 
-  void updateRecipe(String id, Recipe updatedRecipe) {
-    final index = _recipes.indexWhere((r) => r.id == id);
-    if (index != -1) {
-      _recipes[index] = updatedRecipe;
-    }
+  void updateRecipe(int index, Recipe recipe) {
+    _box.putAt(index, recipe);
   }
 
-  void deleteRecipe(String id) {
-    _recipes.removeWhere((r) => r.id == id);
+  void deleteRecipe(int index) {
+    _box.deleteAt(index);
   }
 
-  Recipe? getRecipeById(String id) {
-    try {
-      return _recipes.firstWhere((r) => r.id == id);
-    } catch (_) {
+  Recipe? getRecipe(int index) {
+    if (index < 0 || index >= _box.length) {
       return null;
     }
+
+    return _box.getAt(index);
   }
 
-  bool get isEmpty => _recipes.isEmpty;
+  int get count => _box.length;
+
+  bool get isEmpty => _box.isEmpty;
+
+  bool get isNotEmpty => _box.isNotEmpty;
+
+  void clear() {
+    _box.clear();
+  }
 }

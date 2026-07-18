@@ -57,15 +57,21 @@ class _InventoryExitPageState
     IconData? icon,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding:
+          const EdgeInsets.only(
+        bottom: 16,
+      ),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
           prefixIcon:
-              icon == null ? null : Icon(icon),
-          border: const OutlineInputBorder(),
+              icon == null
+                  ? null
+                  : Icon(icon),
+          border:
+              const OutlineInputBorder(),
         ),
       ),
     );
@@ -145,7 +151,8 @@ class _InventoryExitPageState
           selectedIngredient!.category,
       unit: selectedIngredient!.unit,
       purchasePrice:
-          selectedIngredient!.purchasePrice,
+          selectedIngredient!
+              .purchasePrice,
       stock:
           selectedIngredient!.stock -
               quantity,
@@ -159,20 +166,21 @@ class _InventoryExitPageState
     ingredientService.updateIngredient(
       selectedIndex!,
       updatedIngredient,
-    );
-
-    movementService.addMovement(
+    );    movementService.addMovement(
       InventoryMovement(
         id: DateTime.now()
             .millisecondsSinceEpoch
             .toString(),
         date: DateTime.now(),
-        type: "Salida",
-        ingredient:
+        ingredientId:
+            updatedIngredient.id,
+        ingredientName:
             updatedIngredient.name,
         quantity: quantity,
         unit: updatedIngredient.unit,
-        reason: selectedReason!,
+        type: "Salida",
+        reference:
+            selectedReason!,
         notes: _notesController.text,
       ),
     );
@@ -187,11 +195,14 @@ class _InventoryExitPageState
     );
 
     Navigator.pop(context);
-  }  @override
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     final ingredients =
-        ingredientService.getAllIngredients();
+        ingredientService
+            .getAllIngredients();
 
     return Scaffold(
       appBar: AppBar(
@@ -201,24 +212,29 @@ class _InventoryExitPageState
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         child: Column(
           children: [
 
-            DropdownButtonFormField<IngredientCatalog>(
-              initialValue: selectedIngredient,
-              decoration: const InputDecoration(
-                labelText: "Ingrediente",
-                prefixIcon: Icon(Icons.science),
-                border: OutlineInputBorder(),
+            DropdownButtonFormField<
+                IngredientCatalog>(
+              initialValue:
+                  selectedIngredient,
+              decoration:
+                  const InputDecoration(
+                labelText:
+                    "Ingrediente",
+                prefixIcon:
+                    Icon(Icons.science),
+                border:
+                    OutlineInputBorder(),
               ),
               items: List.generate(
                 ingredients.length,
                 (index) {
                   final ingredient =
-                      ingredients[index];
-
-                  return DropdownMenuItem<
+                      ingredients[index];                  return DropdownMenuItem<
                       IngredientCatalog>(
                     value: ingredient,
                     child: Text(
@@ -244,15 +260,21 @@ class _InventoryExitPageState
             const SizedBox(height: 16),
 
             DropdownButtonFormField<String>(
-              initialValue: selectedReason,
-              decoration: const InputDecoration(
-                labelText: "Motivo de la salida",
+              initialValue:
+                  selectedReason,
+              decoration:
+                  const InputDecoration(
+                labelText:
+                    "Motivo de la salida",
                 prefixIcon: Icon(
                   Icons.assignment_outlined,
                 ),
-                border: OutlineInputBorder(),
+                border:
+                    OutlineInputBorder(),
               ),
-              items: reasons.map((reason) {
+              items: reasons.map((
+                reason,
+              ) {
                 return DropdownMenuItem(
                   value: reason,
                   child: Text(reason),
@@ -260,7 +282,8 @@ class _InventoryExitPageState
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedReason = value;
+                  selectedReason =
+                      value;
                 });
               },
             ),
@@ -304,7 +327,6 @@ class _InventoryExitPageState
                 onPressed: saveExit,
               ),
             ),
-
           ],
         ),
       ),

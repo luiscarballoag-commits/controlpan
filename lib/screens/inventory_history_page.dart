@@ -31,31 +31,36 @@ class _InventoryHistoryPageState
         ),
         centerTitle: true,
       ),
-
       body: movements.isEmpty
           ? const Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding:
+                    EdgeInsets.all(24),
                 child: Text(
                   "Aún no existen movimientos de inventario.",
-                  textAlign: TextAlign.center,
+                  textAlign:
+                      TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
                   ),
                 ),
               ),
-            )          : ListView.builder(
-              padding: const EdgeInsets.all(12),
-              itemCount: movements.length,
-              itemBuilder: (context, index) {
+            )
+          : ListView.builder(
+              padding:
+                  const EdgeInsets.all(12),
+              itemCount:
+                  movements.length,
+              itemBuilder:
+                  (context, index) {
 
-                final InventoryMovement movement =
+                final InventoryMovement
+                    movement =
                     movements[index];
 
                 final bool isEntry =
-                    movement.type == "Entrada";
-
-                return Card(
+                    movement.type ==
+                        "Entrada";                return Card(
                   margin: const EdgeInsets.only(
                     bottom: 12,
                   ),
@@ -71,15 +76,13 @@ class _InventoryHistoryPageState
                         color: Colors.white,
                       ),
                     ),
-
                     title: Text(
-                      movement.ingredient,
+                      movement.ingredientName,
                       style: const TextStyle(
                         fontWeight:
                             FontWeight.bold,
                       ),
                     ),
-
                     subtitle: Column(
                       crossAxisAlignment:
                           CrossAxisAlignment.start,
@@ -90,14 +93,18 @@ class _InventoryHistoryPageState
                         ),
 
                         Text(
-                          movement.reason,
+                          movement.reference,
                         ),
 
                         if (movement.notes
                             .isNotEmpty)
                           Text(
                             movement.notes,
-                          ),                        const SizedBox(height: 4),
+                          ),
+
+                        const SizedBox(
+                          height: 4,
+                        ),
 
                         Text(
                           movement.type,
@@ -117,9 +124,7 @@ class _InventoryHistoryPageState
                             fontSize: 12,
                             color: Colors.grey,
                           ),
-                        ),
-
-                      ],
+                        ),                      ],
                     ),
                   ),
                 );

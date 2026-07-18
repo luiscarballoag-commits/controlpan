@@ -2,9 +2,8 @@ import 'package:hive/hive.dart';
 
 part 'inventory_movement.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 7)
 class InventoryMovement extends HiveObject {
-
   @HiveField(0)
   final String id;
 
@@ -12,10 +11,10 @@ class InventoryMovement extends HiveObject {
   final DateTime date;
 
   @HiveField(2)
-  final String type;
+  final String ingredientId;
 
   @HiveField(3)
-  final String ingredient;
+  final String ingredientName;
 
   @HiveField(4)
   final double quantity;
@@ -24,19 +23,23 @@ class InventoryMovement extends HiveObject {
   final String unit;
 
   @HiveField(6)
-  final String reason;
+  final String type;
 
   @HiveField(7)
+  final String reference;
+
+  @HiveField(8)
   final String notes;
 
   InventoryMovement({
     required this.id,
     required this.date,
-    required this.type,
-    required this.ingredient,
+    required this.ingredientId,
+    required this.ingredientName,
     required this.quantity,
     required this.unit,
-    required this.reason,
-    required this.notes,
+    required this.type,
+    required this.reference,
+    this.notes = '',
   });
 }

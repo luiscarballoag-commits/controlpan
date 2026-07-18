@@ -57,13 +57,17 @@ class _InventoryEntryPageState
         TextInputType.text,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding:
+          const EdgeInsets.only(
+        bottom: 16,
+      ),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
+          border:
+              const OutlineInputBorder(),
         ),
       ),
     );
@@ -118,20 +122,25 @@ class _InventoryEntryPageState
     ingredientService.updateIngredient(
       selectedIndex!,
       updatedIngredient,
-    );
-
-    movementService.addMovement(
+    );    movementService.addMovement(
       InventoryMovement(
         id: DateTime.now()
             .millisecondsSinceEpoch
             .toString(),
         date: DateTime.now(),
-        type: "Entrada",
-        ingredient:
+        ingredientId:
+            updatedIngredient.id,
+        ingredientName:
             updatedIngredient.name,
         quantity: quantity,
         unit: updatedIngredient.unit,
-        reason: "Compra",
+        type: "Entrada",
+        reference:
+            _invoiceController.text
+                    .trim()
+                    .isEmpty
+                ? "Compra Manual"
+                : _invoiceController.text,
         notes: _notesController.text,
       ),
     );
@@ -146,11 +155,14 @@ class _InventoryEntryPageState
     );
 
     Navigator.pop(context);
-  }  @override
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     final ingredients =
-        ingredientService.getAllIngredients();
+        ingredientService
+            .getAllIngredients();
 
     return Scaffold(
       appBar: AppBar(
@@ -160,23 +172,27 @@ class _InventoryEntryPageState
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding:
+            const EdgeInsets.all(16),
         child: Column(
           children: [
 
-            DropdownButtonFormField<IngredientCatalog>(
-              initialValue: selectedIngredient,
-              decoration: const InputDecoration(
-                labelText: "Ingrediente",
-                border: OutlineInputBorder(),
+            DropdownButtonFormField<
+                IngredientCatalog>(
+              initialValue:
+                  selectedIngredient,
+              decoration:
+                  const InputDecoration(
+                labelText:
+                    "Ingrediente",
+                border:
+                    OutlineInputBorder(),
               ),
               items: List.generate(
                 ingredients.length,
                 (index) {
                   final ingredient =
-                      ingredients[index];
-
-                  return DropdownMenuItem<
+                      ingredients[index];                  return DropdownMenuItem<
                       IngredientCatalog>(
                     value: ingredient,
                     child: Text(
@@ -256,7 +272,6 @@ class _InventoryEntryPageState
                 onPressed: saveEntry,
               ),
             ),
-
           ],
         ),
       ),

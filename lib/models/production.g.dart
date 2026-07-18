@@ -1,36 +1,36 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'inventory_movement.dart';
+part of 'production.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class InventoryMovementAdapter extends TypeAdapter<InventoryMovement> {
+class ProductionAdapter extends TypeAdapter<Production> {
   @override
-  final int typeId = 7;
+  final int typeId = 6;
 
   @override
-  InventoryMovement read(BinaryReader reader) {
+  Production read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return InventoryMovement(
+    return Production(
       id: fields[0] as String,
       date: fields[1] as DateTime,
-      ingredientId: fields[2] as String,
-      ingredientName: fields[3] as String,
-      quantity: fields[4] as double,
-      unit: fields[5] as String,
-      type: fields[6] as String,
-      reference: fields[7] as String,
+      recipeId: fields[2] as String,
+      recipeName: fields[3] as String,
+      lots: fields[4] as int,
+      totalMassKg: fields[5] as double,
+      pieceWeightGrams: fields[6] as double,
+      totalPieces: fields[7] as int,
       notes: fields[8] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, InventoryMovement obj) {
+  void write(BinaryWriter writer, Production obj) {
     writer
       ..writeByte(9)
       ..writeByte(0)
@@ -38,17 +38,17 @@ class InventoryMovementAdapter extends TypeAdapter<InventoryMovement> {
       ..writeByte(1)
       ..write(obj.date)
       ..writeByte(2)
-      ..write(obj.ingredientId)
+      ..write(obj.recipeId)
       ..writeByte(3)
-      ..write(obj.ingredientName)
+      ..write(obj.recipeName)
       ..writeByte(4)
-      ..write(obj.quantity)
+      ..write(obj.lots)
       ..writeByte(5)
-      ..write(obj.unit)
+      ..write(obj.totalMassKg)
       ..writeByte(6)
-      ..write(obj.type)
+      ..write(obj.pieceWeightGrams)
       ..writeByte(7)
-      ..write(obj.reference)
+      ..write(obj.totalPieces)
       ..writeByte(8)
       ..write(obj.notes);
   }
@@ -59,7 +59,7 @@ class InventoryMovementAdapter extends TypeAdapter<InventoryMovement> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is InventoryMovementAdapter &&
+      other is ProductionAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

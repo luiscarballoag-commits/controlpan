@@ -1,0 +1,163 @@
+import 'package:flutter/material.dart';
+
+import '../models/recipe.dart';
+import '../services/recipe_service.dart';
+import 'production_lots_page.dart';
+
+class ProductionRecipePage extends StatefulWidget {
+  const ProductionRecipePage({super.key});
+
+  @override
+  State<ProductionRecipePage> createState() =>
+      _ProductionRecipePageState();
+}
+
+class _ProductionRecipePageState
+    extends State<ProductionRecipePage> {
+  final RecipeService recipeService =
+      RecipeService();
+
+  final TextEditingController
+      searchController =
+      TextEditingController();
+
+  List<Recipe> recipes = [];
+
+  List<Recipe> filteredRecipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    recipes = recipeService.getAllRecipes();
+
+    filteredRecipes =
+        List.from(recipes);
+
+    searchController.addListener(() {
+      final query =
+          searchController.text
+              .toLowerCase();
+
+      setState(() {
+        filteredRecipes = recipes
+            .where(
+              (recipe) => recipe.name
+                  .toLowerCase()
+                  .contains(query),
+            )
+            .toList();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Producción Inteligente",
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.all(16),
+            child: TextField(
+              controller:
+                  searchController,
+              decoration:
+                  const InputDecoration(
+                hintText:
+                    "Buscar receta...",
+                prefixIcon:
+                    Icon(Icons.search),
+                border:
+                    OutlineInputBorder(),
+              ),
+            ),
+          ),
+
+          Expanded(
+            child:
+                filteredRecipes.isEmpty
+                    ? const Center(
+                        child: Text(
+                          "No hay recetas disponibles.",
+                          textAlign:
+                              TextAlign.center,
+                          style:
+                              TextStyle(
+                            fontSize: 18,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount:
+                            filteredRecipes
+                                .length,
+                        itemBuilder:
+                            (context,
+                                index) {
+                          final recipe =
+                              filteredRecipes[
+                                  index];
+
+                          return Card(
+                            margin:
+                                const EdgeInsets.symmetric(
+                              horizontal:
+                                  12,
+                              vertical:
+                                  6,
+                            ),
+                            child:
+                                ListTile(
+                              leading:
+                                  const CircleAvatar(
+                                child: Icon(
+                                  Icons
+                                      .menu_book,
+                                ),
+                              ),
+                              title: Text(
+                                recipe.name,
+                              ),
+                              subtitle:
+                                  Text(
+                                "${recipe.ingredients.length} ingredientes",
+                              ),
+                              trailing:
+                                  const Icon(
+                                Icons
+                                    .arrow_forward_ios,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) =>
+                                            ProductionLotsPage(
+                                      recipe:
+                                          recipe,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    );
+  }
+}

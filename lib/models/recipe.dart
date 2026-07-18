@@ -1,19 +1,24 @@
-/// =======================================================
-/// CONTROLPAN
-/// Modelo: recipe.dart
-/// Descripción:
-/// Modelo de una receta de producción.
-/// =======================================================
+import 'package:hive/hive.dart';
 
 import 'recipe_ingredient.dart';
 
-class Recipe {
+part 'recipe.g.dart';
+
+@HiveType(typeId: 4)
+class Recipe extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final String description;
+
+  @HiveField(3)
   final List<RecipeIngredient> ingredients;
 
-  const Recipe({
+  Recipe({
     required this.id,
     required this.name,
     required this.description,
@@ -28,5 +33,19 @@ class Recipe {
     }
 
     return total;
+  }
+
+  Recipe copyWith({
+    String? id,
+    String? name,
+    String? description,
+    List<RecipeIngredient>? ingredients,
+  }) {
+    return Recipe(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      ingredients: ingredients ?? this.ingredients,
+    );
   }
 }
