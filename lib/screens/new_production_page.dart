@@ -1,168 +1,105 @@
 import 'package:flutter/material.dart';
 
-import '../core/production_engine/production_calculator.dart';
-import '../models/production.dart';
-import '../services/production_service.dart';
+import '../services/dashboard_service.dart';
+import 'production_recipe_page.dart';
+import 'productions_page.dart';
+import 'recipes_page.dart';
 
-class NewProductionPage extends StatefulWidget {
+class NewProductionPage extends StatelessWidget {
   const NewProductionPage({super.key});
 
-  @override
-  State<NewProductionPage> createState() =>
-      _NewProductionPageState();
-}
-
-class _NewProductionPageState
-    extends State<NewProductionPage> {
-  final ProductionService productionService =
-      ProductionService();
-
-  final TextEditingController flourController =
-      TextEditingController();
-
-  final TextEditingController waterController =
-      TextEditingController();
-
-  final TextEditingController sugarController =
-      TextEditingController();
-
-  final TextEditingController saltController =
-      TextEditingController();
-
-  final TextEditingController yeastController =
-      TextEditingController();
-
-  final TextEditingController fatController =
-      TextEditingController();
-
-  final TextEditingController butterController =
-      TextEditingController();
-
-  final TextEditingController pieceWeightController =
-      TextEditingController();
-
-  @override
-  void dispose() {
-    flourController.dispose();
-    waterController.dispose();
-    sugarController.dispose();
-    saltController.dispose();
-    yeastController.dispose();
-    fatController.dispose();
-    butterController.dispose();
-    pieceWeightController.dispose();
-
-    super.dispose();
-  }  Widget buildField(
-    String title,
-    TextEditingController controller,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextField(
-        controller: controller,
-        keyboardType:
-            const TextInputType.numberWithOptions(
-          decimal: true,
+  Widget infoCard({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Expanded(
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
         ),
-        decoration: InputDecoration(
-          labelText: title,
-          border: const OutlineInputBorder(),
-        ),
-      ),
-    );
-  }
-
-  void calculateProduction() {
-    final result =
-        ProductionCalculator.calculate(
-      flourKg:
-          double.tryParse(flourController.text) ??
-              0,
-      waterLiters:
-          double.tryParse(waterController.text) ??
-              0,
-      sugarGrams:
-          double.tryParse(sugarController.text) ??
-              0,
-      saltGrams:
-          double.tryParse(saltController.text) ??
-              0,
-      yeastGrams:
-          double.tryParse(yeastController.text) ??
-              0,
-      fatGrams:
-          double.tryParse(fatController.text) ??
-              0,
-      butterGrams:
-          double.tryParse(butterController.text) ??
-              0,
-      pieceWeightGrams:
-          double.tryParse(
-                pieceWeightController.text,
-              ) ??
-              0,
-    );
-
-    final production = Production(
-      id: DateTime.now()
-          .millisecondsSinceEpoch
-          .toString(),
-      date: DateTime.now(),
-      recipeId: "",
-      recipeName: "Producción Manual",
-      lots: 1,
-      totalMassKg: result.totalMass / 1000,
-      pieceWeightGrams:
-          result.pieceWeight,
-      totalPieces:
-          result.totalPieces,
-    );
-
-    productionService.addProduction(
-      production,
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) =>
-          AlertDialog(
-        title: const Text(
-          "Producción Registrada",
-        ),
-        content: Column(
-          mainAxisSize:
-              MainAxisSize.min,
-          children: [
-            Text(
-              "Masa Total: ${production.totalMassKg.toStringAsFixed(2)} kg",
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Cantidad de Panes: ${production.totalPieces}",
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Peso por Pan: ${production.pieceWeightGrams.toStringAsFixed(0)} g",
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () =>
-                Navigator.pop(
-                    context),
-            child:
-                const Text("Aceptar"),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 10,
           ),
-        ],
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                size: 34,
+                color: const Color(0xFF8D6E63),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget menuCard({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Widget page,
+  }) {
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(18),
+        leading: CircleAvatar(
+          radius: 28,
+          backgroundColor: const Color(0xFF8D6E63),
+          child: Icon(
+            icon,
+            color: Colors.white,
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        subtitle: Text(subtitle),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => page,
+            ),
+          );
+        },
       ),
     );
   }
 
   @override
-  Widget build(
-      BuildContext context) {
+  Widget build(BuildContext context) {    final dashboard = DashboardService();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -170,70 +107,95 @@ class _NewProductionPageState
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.all(16),
-        child: Column(
-          children: [            buildField(
-              "Harina (kg)",
-              flourController,
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Text(
+            "Resumen de Hoy",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
+          ),
 
-            buildField(
-              "Agua (L)",
-              waterController,
-            ),
+          const SizedBox(height: 16),
 
-            buildField(
-              "Azúcar (g)",
-              sugarController,
-            ),
-
-            buildField(
-              "Sal (g)",
-              saltController,
-            ),
-
-            buildField(
-              "Levadura (g)",
-              yeastController,
-            ),
-
-            buildField(
-              "Manteca Vegetal (g)",
-              fatController,
-            ),
-
-            buildField(
-              "Mantequilla (g)",
-              butterController,
-            ),
-
-            const SizedBox(height: 20),
-
-            buildField(
-              "Peso por Pan (g)",
-              pieceWeightController,
-            ),
-
-            const SizedBox(height: 30),
-
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton(
-                onPressed: calculateProduction,
-                child: const Text(
-                  "INICIAR PRODUCCIÓN",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          Row(
+            children: [
+              infoCard(
+                icon: Icons.factory,
+                title: "Producciones",
+                value: dashboard.productionsToday.toString(),
               ),
+
+              const SizedBox(width: 12),
+
+              infoCard(
+                icon: Icons.scale,
+                title: "Kg",
+                value: dashboard.totalMassToday
+                    .toStringAsFixed(1),
+              ),
+
+              const SizedBox(width: 12),
+
+              infoCard(
+                icon: Icons.bakery_dining,
+                title: "Panes",
+                value: dashboard.totalPiecesToday
+                    .toString(),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 30),
+
+          const Text(
+            "Operaciones",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 16),
+
+          menuCard(
+            context: context,
+            icon: Icons.play_circle_fill,
+            title: "Nueva Producción",
+            subtitle:
+                "Seleccionar una receta para producir.",
+            page: const ProductionRecipePage(),
+          ),
+
+          menuCard(
+            context: context,
+            icon: Icons.menu_book,
+            title: "Recetas",
+            subtitle:
+                "Administrar recetas de producción.",
+            page: const RecipesPage(),
+          ),
+
+          menuCard(
+            context: context,
+            icon: Icons.history,
+            title: "Historial",
+            subtitle:
+                "Consultar producciones realizadas.",
+            page: const ProductionsPage(),
+          ),
+
+          menuCard(
+            context: context,
+            icon: Icons.calculate,
+            title: "Producción Manual",
+            subtitle:
+                "Próximamente disponible.",
+            page: const ProductionRecipePage(),
+          ),
+        ],
       ),
     );
   }
