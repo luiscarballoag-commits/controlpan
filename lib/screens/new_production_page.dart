@@ -12,40 +12,48 @@ class NewProductionPage extends StatelessWidget {
     required IconData icon,
     required String title,
     required String value,
+    required Color color,
   }) {
     return Expanded(
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        height: 120,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          color: color,
           borderRadius: BorderRadius.circular(18),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 8,
+              color: Colors.black12,
+              offset: Offset(0, 3),
+            ),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 18,
-            horizontal: 10,
-          ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                size: 34,
-                color: const Color(0xFF8D6E63),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: Colors.white,
+              size: 34,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 10),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 13,
               ),
-              const SizedBox(height: 4),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -60,7 +68,7 @@ class NewProductionPage extends StatelessWidget {
   }) {
     return Card(
       elevation: 5,
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
       ),
@@ -82,9 +90,7 @@ class NewProductionPage extends StatelessWidget {
           ),
         ),
         subtitle: Text(subtitle),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-        ),
+        trailing: const Icon(Icons.arrow_forward_ios),
         onTap: () {
           Navigator.push(
             context,
@@ -101,9 +107,13 @@ class NewProductionPage extends StatelessWidget {
   Widget build(BuildContext context) {    final dashboard = DashboardService();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F1EB),
       appBar: AppBar(
         title: const Text(
           "Producción Inteligente",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -113,12 +123,12 @@ class NewProductionPage extends StatelessWidget {
           const Text(
             "Resumen de Hoy",
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
 
           Row(
             children: [
@@ -126,24 +136,22 @@ class NewProductionPage extends StatelessWidget {
                 icon: Icons.factory,
                 title: "Producciones",
                 value: dashboard.productionsToday.toString(),
+                color: Colors.brown,
               ),
-
-              const SizedBox(width: 12),
 
               infoCard(
                 icon: Icons.scale,
                 title: "Kg",
                 value: dashboard.totalMassToday
                     .toStringAsFixed(1),
+                color: Colors.orange,
               ),
-
-              const SizedBox(width: 12),
 
               infoCard(
                 icon: Icons.bakery_dining,
                 title: "Panes",
-                value: dashboard.totalPiecesToday
-                    .toString(),
+                value: dashboard.totalPiecesToday.toString(),
+                color: Colors.green,
               ),
             ],
           ),
@@ -153,7 +161,7 @@ class NewProductionPage extends StatelessWidget {
           const Text(
             "Operaciones",
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -165,7 +173,7 @@ class NewProductionPage extends StatelessWidget {
             icon: Icons.play_circle_fill,
             title: "Nueva Producción",
             subtitle:
-                "Seleccionar una receta para producir.",
+                "Seleccionar una receta para comenzar.",
             page: const ProductionRecipePage(),
           ),
 
@@ -174,16 +182,16 @@ class NewProductionPage extends StatelessWidget {
             icon: Icons.menu_book,
             title: "Recetas",
             subtitle:
-                "Administrar recetas de producción.",
+                "Administrar recetas disponibles.",
             page: const RecipesPage(),
           ),
 
           menuCard(
             context: context,
             icon: Icons.history,
-            title: "Historial",
+            title: "Historial de Producción",
             subtitle:
-                "Consultar producciones realizadas.",
+                "Consultar todas las producciones realizadas.",
             page: const ProductionsPage(),
           ),
 
@@ -195,6 +203,50 @@ class NewProductionPage extends StatelessWidget {
                 "Próximamente disponible.",
             page: const ProductionRecipePage(),
           ),
+
+          const SizedBox(height: 28),
+
+          if (dashboard.lastProduction != null) ...[
+            const Text(
+              "Última Producción",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: ListTile(
+                leading: const CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Color(0xFF8D6E63),
+                  child: Icon(
+                    Icons.local_fire_department,
+                    color: Colors.white,
+                  ),
+                ),
+                title: Text(
+                  dashboard.lastProduction!.recipeName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  "${dashboard.lastProduction!.totalPieces} panes • ${dashboard.lastProduction!.totalMassKg.toStringAsFixed(2)} kg",
+                ),
+                trailing: const Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
