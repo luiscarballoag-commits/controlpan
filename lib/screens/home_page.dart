@@ -14,6 +14,7 @@ import 'costs_page.dart';
 import 'inventory_page.dart';
 import 'productions_page.dart';
 import 'dashboard_page.dart';
+import 'production_dashboard_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
 
           InventoryPage(),
 
-          const DashboardPage(),
+          const ProductionDashboardPage(),
 
           const CostsPage(),
 
