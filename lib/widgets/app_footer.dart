@@ -6,22 +6,16 @@ class AppFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Text(
-          "ControlPan v1.0\n"
-          "La forma inteligente de gestionar tu panadería\n\n"
-          "Desarrollado por Producciones Lcarballog",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 14,
-            height: 1.4,
-          ),
+      child: Text(
+        "ControlPan v1.0\n"
+        "La forma inteligente de gestionar tu panadería\n\n"
+        "Desarrollado por Producciones Lcarballog",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.grey.shade600,
+          fontSize: 14,
         ),
       ),
     );
   }
 }
-
-
