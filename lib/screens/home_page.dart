@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
 
           InventoryPage(),
 
-          const ProductionsPage(),
+          const DashboardPage(),
 
           const CostsPage(),
 
