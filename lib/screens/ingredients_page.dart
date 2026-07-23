@@ -2,49 +2,37 @@ import 'package:flutter/material.dart';
 
 import '../services/ingredient_service.dart';
 import 'ingredient_editor_page.dart';
+import 'inventory_kardex_page.dart';
+import 'inventory_entry_page.dart';
+import 'inventory_exit_page.dart';
 
 class IngredientsPage extends StatefulWidget {
   const IngredientsPage({super.key});
 
   @override
-  State<IngredientsPage> createState() =>
-      _IngredientsPageState();
+  State<IngredientsPage> createState() => _IngredientsPageState();
 }
 
-class _IngredientsPageState
-    extends State<IngredientsPage> {
+class _IngredientsPageState extends State<IngredientsPage> {
+  final IngredientService ingredientService = IngredientService();
 
-  final IngredientService ingredientService =
-      IngredientService();
-
-  Future<void> deleteIngredient(
-    int index,
-  ) async {
-
-    final confirm =
-        await showDialog<bool>(
+  Future<void> deleteIngredient(int index) async {
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text(
-          "Eliminar ingrediente",
-        ),
+        title: const Text("Eliminar ingrediente"),
         content: const Text(
           "¿Está seguro de eliminar este ingrediente?",
         ),
         actions: [
-
           TextButton(
-            onPressed: () =>
-                Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text("Cancelar"),
           ),
-
           ElevatedButton(
-            onPressed: () =>
-                Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(context, true),
             child: const Text("Eliminar"),
           ),
-
         ],
       ),
     );
@@ -58,153 +46,156 @@ class _IngredientsPageState
 
   @override
   Widget build(BuildContext context) {
-
-    final ingredients =
-        ingredientService.getAllIngredients();
+    final ingredients = ingredientService.getAllIngredients();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Catálogo de Ingredientes",
-        ),
+        title: const Text("Catálogo de Ingredientes"),
         centerTitle: true,
       ),
-
       body: ingredients.isEmpty
           ? const Center(
               child: Text(
                 "Aún no tienes ingredientes.\n\nPulsa + para crear el primero.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontSize: 18),
               ),
             )
           : ListView.builder(
               itemCount: ingredients.length,
-              itemBuilder: (
-                context,
-                index,
-              ) {
-
-                final ingredient =
-                    ingredients[index];
+              itemBuilder: (context, index) {
+                final ingredient = ingredients[index];
 
                 return Card(
-                  margin:
-                      const EdgeInsets.symmetric(
+                  margin: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 6,
-                  ),                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
+                  ),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      child: Icon(Icons.inventory_2),
+                    ),
+                    title: Text(
+                      ingredient.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-
-                        ListTile(
-                          contentPadding:
-                              EdgeInsets.zero,
-                          leading:
-                              const CircleAvatar(
-                            child: Icon(
-                              Icons.inventory_2,
-                            ),
-                          ),
-                          title: Text(
-                            ingredient.name,
-                            style:
-                                const TextStyle(
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            "${ingredient.category} • ${ingredient.unit}",
-                          ),
+                        Text(
+                          "${ingredient.category} • ${ingredient.unit}",
                         ),
-
-                        const SizedBox(height: 10),
-
-                        Row(
-                          children: [
-
-                            Expanded(
-                              child:
-                                  OutlinedButton.icon(
-                                icon: const Icon(
-                                  Icons.edit,
-                                ),
-                                label: const Text(
-                                  "Editar",
-                                ),
-                                onPressed:
-                                    () async {
-
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          IngredientEditorPage(
-                                        ingredient:
-                                            ingredient,
-                                        index: index,
-                                      ),
-                                    ),
-                                  );
-
-                                  setState(() {});
-
-                                },
-                              ),
-                            ),
-
-                            const SizedBox(
-                              width: 10,
-                            ),
-
-                            Expanded(
-                              child:
-                                  ElevatedButton.icon(
-                                icon: const Icon(
-                                  Icons.delete,
-                                ),
-                                label: const Text(
-                                  "Eliminar",
-                                ),
-                                style:
-                                    ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.red,
-                                  foregroundColor:
-                                      Colors.white,
-                                ),
-                                onPressed: () {
-                                  deleteIngredient(
-                                    index,
-                                  );
-                                },
-                              ),
-                            ),
-
-                          ],
+                        const SizedBox(height: 4),
+                        Text(
+                          "Stock: ${ingredient.stock.toStringAsFixed(2)}",
                         ),
+                        Text(
+                          "Mínimo: ${ingredient.minimumStock.toStringAsFixed(2)}",
+                        ),
+                        Text(
+                          "Precio: \$${ingredient.purchasePrice.toStringAsFixed(2)}",
+                        ),
+                      ],
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) async {
+                        switch (value) {
+                          case 'edit':
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    IngredientEditorPage(
+                                  ingredient: ingredient,
+                                  index: index,
+                                ),
+                              ),
+                            );
+                            setState(() {});
+                            break;
 
+                          case 'entry':
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const InventoryEntryPage(),
+                              ),
+                            );
+                            setState(() {});
+                            break;
+
+                          case 'exit':
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const InventoryExitPage(),
+                              ),
+                            );
+                            setState(() {});
+                            break;
+
+                          case 'kardex':
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => InventoryKardexPage(
+                                  ingredient: ingredient,
+                                ),
+                              ),
+                            );
+                            break;
+
+                          case 'delete':
+                            deleteIngredient(index);
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => const [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text('✏️ Editar'),
+                        ),
+                        PopupMenuItem(
+                          value: 'entry',
+                          child: Text('➕ Entrada'),
+                        ),
+                        PopupMenuItem(
+                          value: 'exit',
+                          child: Text('➖ Salida'),
+                        ),
+                        PopupMenuItem(
+                          value: 'kardex',
+                          child: Text('📋 Ver Kardex'),
+                        ),
+                        PopupMenuDivider(),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('🗑️ Eliminar'),
+                        ),
                       ],
                     ),
                   ),
                 );
               },
-            ),      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
+            ),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const IngredientEditorPage(),
+              builder: (_) =>
+                  const IngredientEditorPage(),
             ),
           );
 
           setState(() {});
         },
+        icon: const Icon(Icons.add),
+        label: const Text("Ingrediente"),
       ),
     );
   }

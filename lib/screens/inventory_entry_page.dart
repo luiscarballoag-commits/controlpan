@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../core/inventory/inventory_manager.dart';
 import '../models/ingredient_catalog.dart';
-import '../models/inventory_movement.dart';
 import '../services/ingredient_service.dart';
-import '../services/inventory_movement_service.dart';
 
 class InventoryEntryPage extends StatefulWidget {
   const InventoryEntryPage({super.key});
@@ -19,8 +18,8 @@ class _InventoryEntryPageState
   final IngredientService ingredientService =
       IngredientService();
 
-  final InventoryMovementService movementService =
-      InventoryMovementService();
+  final InventoryManager inventoryManager =
+      InventoryManager();
 
   IngredientCatalog? selectedIngredient;
   int? selectedIndex;
@@ -57,29 +56,24 @@ class _InventoryEntryPageState
         TextInputType.text,
   }) {
     return Padding(
-      padding:
-          const EdgeInsets.only(
-        bottom: 16,
-      ),
+      padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
         controller: controller,
         keyboardType: keyboard,
         decoration: InputDecoration(
           labelText: label,
-          border:
-              const OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );
   }
 
-  void saveEntry() {
+  Future<void> saveEntry() async {
 
     if (selectedIngredient == null ||
         selectedIndex == null) {
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
             "Seleccione un ingrediente",
@@ -96,57 +90,25 @@ class _InventoryEntryPageState
             ) ??
             0;
 
-    final updatedIngredient =
-        IngredientCatalog(
-      id: selectedIngredient!.id,
-      name: selectedIngredient!.name,
-      category:
-          selectedIngredient!.category,
-      unit: selectedIngredient!.unit,
+    await inventoryManager.purchaseIngredient(
+      index: selectedIndex!,
+      ingredient: selectedIngredient!,
+      quantity: quantity,
       purchasePrice:
           double.tryParse(
                 _priceController.text,
               ) ??
-              selectedIngredient!
-                  .purchasePrice,
-      stock:
-          selectedIngredient!.stock +
-              quantity,
-      minimumStock:
-          selectedIngredient!
-              .minimumStock,
-      notes:
-          selectedIngredient!.notes,
+              selectedIngredient!.purchasePrice,
+      reference:
+          _invoiceController.text.trim().isEmpty
+              ? "Compra Manual"
+              : _invoiceController.text,
+      notes: _notesController.text,
     );
 
-    ingredientService.updateIngredient(
-      selectedIndex!,
-      updatedIngredient,
-    );    movementService.addMovement(
-      InventoryMovement(
-        id: DateTime.now()
-            .millisecondsSinceEpoch
-            .toString(),
-        date: DateTime.now(),
-        ingredientId:
-            updatedIngredient.id,
-        ingredientName:
-            updatedIngredient.name,
-        quantity: quantity,
-        unit: updatedIngredient.unit,
-        type: "Entrada",
-        reference:
-            _invoiceController.text
-                    .trim()
-                    .isEmpty
-                ? "Compra Manual"
-                : _invoiceController.text,
-        notes: _notesController.text,
-      ),
-    );
+    if (!mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           "Se agregaron ${quantity.toStringAsFixed(2)} ${selectedIngredient!.unit} a ${selectedIngredient!.name}",
@@ -161,8 +123,7 @@ class _InventoryEntryPageState
   Widget build(BuildContext context) {
 
     final ingredients =
-        ingredientService
-            .getAllIngredients();
+        ingredientService.getAllIngredients();
 
     return Scaffold(
       appBar: AppBar(
@@ -172,28 +133,23 @@ class _InventoryEntryPageState
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
 
-            DropdownButtonFormField<
-                IngredientCatalog>(
-              initialValue:
-                  selectedIngredient,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    "Ingrediente",
-                border:
-                    OutlineInputBorder(),
+            DropdownButtonFormField<IngredientCatalog>(
+              initialValue: selectedIngredient,
+              decoration: const InputDecoration(
+                labelText: "Ingrediente",
+                border: OutlineInputBorder(),
               ),
               items: List.generate(
                 ingredients.length,
                 (index) {
                   final ingredient =
-                      ingredients[index];                  return DropdownMenuItem<
-                      IngredientCatalog>(
+                      ingredients[index];
+
+                  return DropdownMenuItem<IngredientCatalog>(
                     value: ingredient,
                     child: Text(
                       ingredient.name,
@@ -207,9 +163,7 @@ class _InventoryEntryPageState
 
                   if (value != null) {
                     selectedIndex =
-                        ingredients.indexOf(
-                      value,
-                    );
+                        ingredients.indexOf(value);
                   }
                 });
               },
@@ -221,8 +175,7 @@ class _InventoryEntryPageState
               "Cantidad",
               _quantityController,
               keyboard:
-                  const TextInputType
-                      .numberWithOptions(
+                  const TextInputType.numberWithOptions(
                 decimal: true,
               ),
             ),
@@ -231,8 +184,7 @@ class _InventoryEntryPageState
               "Precio Unitario",
               _priceController,
               keyboard:
-                  const TextInputType
-                      .numberWithOptions(
+                  const TextInputType.numberWithOptions(
                 decimal: true,
               ),
             ),
@@ -258,14 +210,11 @@ class _InventoryEntryPageState
               width: double.infinity,
               height: 55,
               child: ElevatedButton.icon(
-                icon: const Icon(
-                  Icons.save,
-                ),
+                icon: const Icon(Icons.save),
                 label: const Text(
                   "REGISTRAR ENTRADA",
                   style: TextStyle(
-                    fontWeight:
-                        FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
                 ),
