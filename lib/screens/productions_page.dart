@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/production.dart';
 import '../services/production_service.dart';
+import 'production_detail_page.dart';
 
 class ProductionsPage extends StatefulWidget {
   const ProductionsPage({super.key});
@@ -13,14 +13,12 @@ class ProductionsPage extends StatefulWidget {
 
 class _ProductionsPageState
     extends State<ProductionsPage> {
-
   final ProductionService productionService =
       ProductionService();
 
   @override
   Widget build(BuildContext context) {
-
-    final List<Production> productions =
+    final productions =
         productionService.getAllProductions();
 
     return Scaffold(
@@ -38,12 +36,10 @@ class _ProductionsPageState
               ),
             )
           : ListView.builder(
-              padding:
-                  const EdgeInsets.all(16),
-              itemCount:
-                  productions.length,
-              itemBuilder:
-                  (context, index) {                final production =
+              padding: const EdgeInsets.all(16),
+              itemCount: productions.length,
+              itemBuilder: (context, index) {
+                final production =
                     productions[index];
 
                 return Card(
@@ -83,10 +79,22 @@ class _ProductionsPageState
                     trailing: const Icon(
                       Icons.chevron_right,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              ProductionDetailPage(
+                            production:
+                                production,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
-            ),      );
-    }
+            ),
+    );
+  }
 }

@@ -5,21 +5,36 @@
 // Coordina todos los motores de producción.
 // =======================================================
 
+import '../../models/production.dart';
+import '../../models/recipe.dart';
+import '../../services/production_inventory_service.dart';
+import '../../services/production_service.dart';
+
+import '../production_engine/bakers_percentage.dart';
+import '../production_engine/hydration_engine.dart';
 import '../production_engine/ingredient.dart';
 import '../production_engine/production_engine.dart';
 import '../production_engine/production_result.dart';
-import '../production_engine/bakers_percentage.dart';
-import '../production_engine/hydration_engine.dart';
 import '../production_engine/yield_engine.dart';
 
 class ProductionManager {
-  final ProductionEngine _productionEngine = ProductionEngine();
+  final ProductionEngine _productionEngine =
+      ProductionEngine();
+
   final BakersPercentageEngine _bakersEngine =
       BakersPercentageEngine();
+
   final HydrationEngine _hydrationEngine =
       HydrationEngine();
+
   final YieldEngine _yieldEngine =
       YieldEngine();
+
+  final ProductionInventoryService _inventoryService =
+      ProductionInventoryService();
+
+  final ProductionService _productionService =
+      ProductionService();
 
   ProductionResult calculateProduction({
     required List<Ingredient> ingredients,
@@ -32,12 +47,14 @@ class ProductionManager {
   }
 
   Map<String, double> calculatePercentages(
-      List<Ingredient> ingredients) {
+    List<Ingredient> ingredients,
+  ) {
     return _bakersEngine.calculate(ingredients);
   }
 
   double calculateHydration(
-      List<Ingredient> ingredients) {
+    List<Ingredient> ingredients,
+  ) {
     return _hydrationEngine.calculate(ingredients);
   }
 
@@ -48,6 +65,47 @@ class ProductionManager {
     return _yieldEngine.calculate(
       totalMass: totalMass,
       bakingLoss: bakingLoss,
+    );
+  }
+
+  Future<void> startProduction({
+    required Recipe recipe,
+    required int lots,
+    required double totalMassKg,
+    required double pieceWeightGrams,
+    required int totalPieces,
+    String notes = '',
+  }) async {
+    if (!_inventoryService.hasEnoughInventory(
+      recipe: recipe,
+      lots: lots.toDouble(),
+    )) {
+      throw Exception(
+        'No hay suficiente inventario para producir.',
+      );
+    }
+
+    _inventoryService.consumeIngredients(
+      recipe: recipe,
+      lots: lots.toDouble(),
+    );
+
+    final production = Production(
+      id: DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(),
+      date: DateTime.now(),
+      recipeId: recipe.id,
+      recipeName: recipe.name,
+      lots: lots,
+      totalMassKg: totalMassKg,
+      pieceWeightGrams: pieceWeightGrams,
+      totalPieces: totalPieces,
+      notes: notes,
+    );
+
+    _productionService.addProduction(
+      production,
     );
   }
 }

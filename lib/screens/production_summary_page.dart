@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/production_manager/production_manager.dart';
 import '../models/production.dart';
 import '../models/recipe.dart';
 import '../models/recipe_ingredient.dart';
@@ -31,6 +32,9 @@ class _ProductionSummaryPageState
   final ProductionInventoryService
       inventoryService =
       ProductionInventoryService();
+
+  final ProductionManager productionManager =
+      ProductionManager();
 
   double totalMassGrams = 0;
 
@@ -80,7 +84,6 @@ class _ProductionSummaryPageState
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-
             Card(
               elevation: 6,
               shape: RoundedRectangleBorder(
@@ -180,25 +183,27 @@ class _ProductionSummaryPageState
                       child: Column(
                         children: [
                           const Icon(
-                            Icons
-                                .bakery_dining,
+                            Icons.bakery_dining,
                             color:
                                 Colors.white,
                             size: 30,
                           ),
                           const SizedBox(
-                              height: 8),                          Text(
+                              height: 8),
+                          Text(
                             totalPieces.toString(),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                              fontWeight:
+                                  FontWeight.bold,
                             ),
                           ),
                           const Text(
                             "Panes",
                             style: TextStyle(
-                              color: Colors.white70,
+                              color:
+                                  Colors.white70,
                             ),
                           ),
                         ],
@@ -207,9 +212,7 @@ class _ProductionSummaryPageState
                   ),
                 ),
               ],
-            ),
-
-            const SizedBox(height: 20),
+            ),            const SizedBox(height: 20),
 
             Card(
               elevation: 4,
@@ -244,14 +247,12 @@ class _ProductionSummaryPageState
             const SizedBox(height: 20),
 
             const Align(
-              alignment:
-                  Alignment.centerLeft,
+              alignment: Alignment.centerLeft,
               child: Text(
                 "Ingredientes necesarios",
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -310,17 +311,22 @@ class _ProductionSummaryPageState
               ),
             ),
 
-            const SizedBox(height: 20),            SizedBox(
+            const SizedBox(height: 20),
+
+            SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor:
                       const Color(0xFF8D6E63),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
+                  foregroundColor:
+                      Colors.white,
+                  shape:
+                      RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.circular(18),
+                        BorderRadius.circular(
+                            18),
                   ),
                 ),
                 icon: const Icon(
@@ -333,8 +339,7 @@ class _ProductionSummaryPageState
                     fontWeight:
                         FontWeight.bold,
                   ),
-                ),
-                onPressed: hasInventory
+                ),                onPressed: hasInventory
                     ? () {
                         inventoryService
                             .consumeIngredients(
